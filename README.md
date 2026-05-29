@@ -1,17 +1,33 @@
-# MedLab Calendar — atualização
+# MedLab Calendar
 
-Este pacote inclui ficheiros prontos para adicionar ao projeto no GitHub:
+Calendário de formação para profissionais de laboratório.
 
-- `src/data/events.ts` — inclui os 2 eventos da SPH adicionados.
-- `src/components/AboutSection.tsx` — nova secção “Sobre”.
-- `src/components/OrganizersSection.tsx` — nova secção “Para Organizadores” com email visível e botão para Google Forms.
-- `.env.local.example` — variável para o link do Google Form.
-- `GOOGLE_FORM_FIELDS.md` — campos recomendados para criar o formulário.
+## Atualização final
 
-Depois de copiares os ficheiros, adiciona o link do Google Form em Vercel:
+Inclui:
+- Secção "Sobre"
+- Secção "Para Organizadores"
+- Email visível: medlabcalendar@gmail.com
+- Botão "Sugerir evento" funcional
+- Ligação preparada para Google Forms via variável `VITE_GOOGLE_FORM_URL`
+- Ficheiro `.env.example`
+- Eventos da Sociedade Portuguesa de Hematologia (SPH):
+  - Reunião Anual da SPH 2026
+  - Programa de Formação Avançada em Hematologia
 
-```env
-NEXT_PUBLIC_EVENT_SUBMISSION_FORM_URL=https://forms.gle/O_TEU_LINK
+## Google Forms
+
+Para usar Google Forms:
+
+1. Cria um Google Form.
+2. Copia o link público.
+3. Na Vercel, vai a **Settings > Environment Variables**.
+4. Cria a variável:
+
+```txt
+VITE_GOOGLE_FORM_URL=https://forms.gle/O_TEU_LINK
 ```
 
-E faz redeploy.
+5. Faz redeploy do projeto.
+
+Se a variável não estiver definida, o botão "Sugerir evento" abre um email pré-preenchido para `medlabcalendar@gmail.com`.
