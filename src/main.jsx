@@ -1,35 +1,52 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
-import { CalendarDays, Mail, Search, Upload, ExternalLink, Microscope, Filter, CheckCircle2 } from 'lucide-react'
+import { CalendarDays, Mail, Search, Upload, ExternalLink, Microscope, Filter, CheckCircle2, UsersRound } from 'lucide-react'
 import './styles.css'
 
 const events = [
   {
-    title: 'Updates in Molecular Diagnostics',
-    date: '12 Jun 2026',
-    area: 'Genética Molecular',
-    type: 'Webinar online',
-    price: 'Gratuito',
-    certificate: 'Certificado disponível',
-    organizer: 'International Laboratory Education',
+    title: '18.ª Reunião Científica da SPML',
+    date: '29–31 Outubro 2026',
+    area: 'Medicina Laboratorial',
+    type: 'Reunião científica presencial',
+    price: 'Consultar inscrição',
+    certificate: 'Consultar organização',
+    organizer: 'Sociedade Portuguesa de Medicina Laboratorial',
+    link: 'https://spml.pt/',
+    region: 'Portugal',
   },
   {
-    title: 'Quality Management in Clinical Laboratories',
-    date: '18 Jun 2026',
-    area: 'Qualidade Laboratorial',
-    type: 'Curso online',
+    title: "PAM 2026 — Porto's Autoimmune Meeting",
+    date: '1–3 Outubro 2026',
+    area: 'Autoimunidade',
+    type: 'Reunião científica presencial',
+    price: 'Consultar inscrição',
+    certificate: 'Consultar organização',
+    organizer: "Porto's Autoimmune Meeting",
+    link: 'https://portoautoimmunemeeting.pt/',
+    region: 'Portugal',
+  },
+  {
+    title: 'Curso de Antibioterapia | 18.ª Edição',
+    date: '16–20 Novembro 2026',
+    area: 'Microbiologia / Infeção',
+    type: 'Curso',
     price: 'Pago',
-    certificate: 'Com certificado',
-    organizer: 'Clinical Lab Academy',
+    certificate: 'Consultar organização',
+    organizer: 'Hospital da Luz Learning Health',
+    link: 'https://www.hospitaldaluz.pt/learninghealth/pt/formacao/calendario-de-cursos-e-eventos/682/curso-antibioterapia-18-edicao',
+    region: 'Portugal',
   },
+]
+
+const societyMeetings = [
   {
-    title: 'Antimicrobial Resistance: Laboratory Perspectives',
-    date: '24 Jun 2026',
-    area: 'Microbiologia',
-    type: 'Webinar live',
-    price: 'Gratuito',
-    certificate: 'Sem informação',
-    organizer: 'MedLab Network',
+    title: '18.ª Reunião Científica da Sociedade Portuguesa de Medicina Laboratorial',
+    date: '29–31 Outubro 2026',
+    location: 'Fórum Braga',
+    organizer: 'SPML',
+    description: 'Reunião científica nacional dedicada à atualização, partilha de conhecimento e discussão de trabalhos científicos em medicina laboratorial.',
+    link: 'https://spml.pt/',
   },
 ]
 
@@ -38,6 +55,7 @@ const categories = [
   'Microbiologia',
   'Bioquímica Clínica',
   'Genética Molecular',
+  'Autoimunidade',
   'Anatomia Patológica',
   'Imunologia',
   'Qualidade',
@@ -61,10 +79,11 @@ function App() {
             </div>
           </div>
           <nav className="nav-links">
+            <a href="#about">Sobre</a>
             <a href="#events">Eventos</a>
+            <a href="#societies">Sociedades científicas</a>
             <a href="#categories">Categorias</a>
             <a href="#newsletter">Newsletter</a>
-            <a href="#submit">Submeter evento</a>
           </nav>
           <a href="#events"><Button>Ver eventos</Button></a>
         </div>
@@ -76,7 +95,7 @@ function App() {
             <div className="pill"><CalendarDays size={16} /> Calendário de formação para profissionais de laboratório</div>
             <h1>Cursos, webinars e eventos laboratoriais num só lugar.</h1>
             <p className="lead">
-              O MedLab Calendar centraliza oportunidades de formação em medicina laboratorial para que profissionais de laboratório não percam webinars, cursos, congressos e eventos científicos relevantes.
+              O MedLab Calendar centraliza oportunidades de formação em medicina laboratorial para que profissionais de laboratório não percam webinars, cursos, congressos e reuniões científicas relevantes.
             </p>
             <div className="hero-actions">
               <a href="#events"><Button>Explorar próximos eventos</Button></a>
@@ -88,7 +107,7 @@ function App() {
           <div className="card feature-card">
             <div className="card-header">
               <div>
-                <p className="eyebrow">Esta semana</p>
+                <p className="eyebrow">Portugal</p>
                 <h2>Eventos em destaque</h2>
               </div>
               <div className="soft-icon"><Filter size={20} /></div>
@@ -101,17 +120,33 @@ function App() {
                       <p className="event-title">{event.title}</p>
                       <p className="muted">{event.organizer}</p>
                     </div>
-                    <span className="tag">{event.price}</span>
+                    <span className="tag">{event.area}</span>
                   </div>
                   <div className="event-meta">
                     <span>{event.date}</span>
-                    <span>{event.area}</span>
                     <span>{event.type}</span>
-                    <span>{event.certificate}</span>
+                    <span>{event.price}</span>
+                    <span>{event.region}</span>
                   </div>
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section id="about" className="intro-section">
+          <div className="container intro-card">
+            <p className="eyebrow">Sobre o projeto</p>
+            <h2>Formação laboratorial mais fácil de encontrar.</h2>
+            <p>
+              A informação sobre cursos, webinars, congressos e reuniões científicas na área laboratorial encontra-se frequentemente dispersa entre sociedades científicas, instituições de ensino, hospitais, empresas, newsletters e redes profissionais.
+            </p>
+            <p>
+              O MedLab Calendar procura reunir essas oportunidades num só lugar, facilitando o acesso a formação contínua relevante, atualizada e organizada por área.
+            </p>
+            <p>
+              O projeto está numa fase inicial e pretende crescer como uma ferramenta de curadoria útil para profissionais de laboratório e outras pessoas interessadas em medicina laboratorial.
+            </p>
           </div>
         </section>
 
@@ -139,10 +174,39 @@ function App() {
                     <p><strong>Custo:</strong> {event.price}</p>
                     <p><strong>Certificado:</strong> {event.certificate}</p>
                   </div>
-                  <Button variant="outline" className="full">Ver página oficial</Button>
+                  <a href={event.link} target="_blank" rel="noreferrer">
+                    <Button variant="outline" className="full">Ver página oficial</Button>
+                  </a>
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section id="societies" className="container societies-section">
+          <div className="section-intro">
+            <p className="eyebrow">Reuniões de sociedades científicas</p>
+            <h2>Eventos científicos nacionais a acompanhar.</h2>
+            <p>Uma área dedicada a reuniões, congressos e encontros promovidos por sociedades científicas relevantes para a medicina laboratorial.</p>
+          </div>
+          <div className="society-list">
+            {societyMeetings.map((meeting) => (
+              <div className="society-card" key={meeting.title}>
+                <div className="soft-icon"><UsersRound size={22} /></div>
+                <div>
+                  <h3>{meeting.title}</h3>
+                  <p className="muted">{meeting.organizer} · {meeting.location}</p>
+                  <p>{meeting.description}</p>
+                  <div className="event-meta compact">
+                    <span>{meeting.date}</span>
+                    <span>Reunião científica</span>
+                  </div>
+                  <a href={meeting.link} target="_blank" rel="noreferrer">
+                    <Button variant="outline">Ver página oficial</Button>
+                  </a>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 
