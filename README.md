@@ -3,8 +3,9 @@
 Calendário de formação para profissionais de laboratório.
 
 ## Atualização incluída
-- Introdução geral do projeto
-- Secção de reuniões de sociedades científicas
-- 18.ª Reunião Científica da SPML 2026
-- PAM 2026 — Porto's Autoimmune Meeting
-- Curso de Antibioterapia | 18.ª Edição — Hospital da Luz Learning Health
+- Subtítulo: Laboratory Medicine Education Hub
+- Introdução com foco em comunidade
+- Botão "Sugerir evento" funcional por email
+- Remoção de Anatomia Patológica das categorias
+- Eventos reais distribuídos por categorias
+- Secção ProMeQuaLab com webinars/formações disponíveis
