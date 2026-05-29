@@ -2,10 +2,27 @@
 
 Calendário de formação para profissionais de laboratório.
 
-## Atualização incluída
+## Versão final limpa
+
+Inclui:
 - Subtítulo: Laboratory Medicine Education Hub
-- Introdução com foco em comunidade
+- Introdução em português europeu
 - Botão "Sugerir evento" funcional por email
-- Remoção de Anatomia Patológica das categorias
-- Eventos reais distribuídos por categorias
-- Secção ProMeQuaLab com webinars/formações disponíveis
+- Categorias científicas finais:
+  - Medicina Laboratorial
+  - Autoimunidade
+  - Bioquímica Clínica
+  - Hematologia
+  - Coagulação e Hemostase
+  - Imunologia
+  - Microbiologia / Infeção
+  - Genética Molecular
+  - Qualidade
+- Sem POCT
+- Sem "Reuniões científicas" como categoria
+- Sem secção própria ProMeQuaLab
+- Apenas eventos futuros ou formações atuais:
+  - SPML 2026
+  - PAM 2026
+  - Curso de Antibioterapia 2026
+  - Boas práticas no exame de urina de rotina em laboratório
