@@ -488,3 +488,61 @@ input {
     width: 100%;
   }
 }
+
+
+/* Updates: próximo evento em destaque, cards menos repetitivos e submissão via Google Forms */
+.feature-organizer {
+  margin-top: 16px;
+}
+
+.next-event-details {
+  display: grid;
+  gap: 10px;
+  margin: 20px 0 16px;
+  color: #475569;
+  font-size: 15px;
+}
+
+.next-event-details p {
+  margin: 0;
+}
+
+.next-preview {
+  margin-top: 22px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.next-preview-row {
+  display: grid;
+  gap: 4px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.next-preview-row span {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.next-preview-row strong {
+  font-size: 14px;
+}
+
+.compact-details p {
+  margin: 8px 0;
+}
+
+.category-summary {
+  margin-top: 16px;
+}
+
+.category-summary p {
+  color: #475569;
+  margin: 0 0 12px;
+}

@@ -15,51 +15,97 @@ import './styles.css'
 
 const contactEmail = 'medlabcalendar@gmail.com'
 const submissionFormUrl =
-  import.meta.env.VITE_EVENT_SUBMISSION_FORM_URL || 'https://forms.gle/COLOCA_AQUI_O_TEU_LINK'
+  import.meta.env.VITE_EVENT_SUBMISSION_FORM_URL || 'https://forms.gle/COLOCA_AQUI_O_LINK_DO_GOOGLE_FORM'
 
 const events = [
   {
-    title: '18.ª Reunião Científica da SPML',
-    date: '29–31 Outubro 2026',
-    category: 'Medicina Laboratorial',
-    type: 'Reunião científica presencial',
+    title: '13.ª Conferência Europeia sobre Doenças Raras e Medicamentos Órfãos',
+    date: '3–4 Junho 2026',
+    startDate: '2026-06-03',
+    category: 'Genética Molecular',
+    type: 'Conferência híbrida',
     price: 'Consultar inscrição',
     certificate: 'Consultar organização',
-    organizer: 'Sociedade Portuguesa de Medicina Laboratorial',
-    link: 'https://spml.pt/',
-    region: 'Portugal',
+    organizer: 'EURORDIS',
+    link: 'https://www.eurordis.org/',
+    region: 'Praga + Online',
     description:
-      'Reunião científica nacional dedicada à atualização, partilha de conhecimento e discussão de trabalhos científicos em medicina laboratorial.',
+      'Conferência europeia dedicada às doenças raras, genética e medicina personalizada.',
   },
   {
-    title: "PAM 2026 — Porto's Autoimmune Meeting",
-    date: '1–3 Outubro 2026',
-    category: 'Autoimunidade',
-    type: 'Reunião científica presencial',
-    price: 'Consultar inscrição',
-    certificate: 'Consultar organização',
-    organizer: "Porto's Autoimmune Meeting",
-    link: 'https://portoautoimmunemeeting.pt/',
-    region: 'Portugal',
-    description:
-      'Encontro científico dedicado à autoimunidade, com foco na atualização e discussão multidisciplinar.',
-  },
-  {
-    title: 'Curso de Antibioterapia | 18.ª Edição',
-    date: '16–20 Novembro 2026',
+    title: 'Biolog Webinar — Consistent Anaerobic Culture Results',
+    date: '16 Junho 2026',
+    startDate: '2026-06-16',
     category: 'Microbiologia / Infeção',
-    type: 'Curso',
-    price: 'Pago',
+    type: 'Webinar online',
+    price: 'Consultar inscrição',
     certificate: 'Consultar organização',
-    organizer: 'Hospital da Luz Learning Health',
-    link: 'https://www.hospitaldaluz.pt/learninghealth/pt/formacao/calendario-de-cursos-e-eventos/682/curso-antibioterapia-18-edicao',
-    region: 'Portugal',
+    organizer: 'Biolog / RapidMicrobiology',
+    link: 'https://www.rapidmicrobiology.com/events/all/webinar',
+    region: 'Online',
     description:
-      'Curso dedicado à utilização de antibioterapia e atualização em infeção, organizado pela Hospital da Luz Learning Health.',
+      'Webinar sobre cultura anaeróbia e boas práticas em microbiologia clínica.',
+  },
+  {
+    title: 'Webinar | Hemocromatose',
+    date: '24 Junho 2026 · 18:30',
+    startDate: '2026-06-24',
+    category: 'Genética Molecular',
+    type: 'Webinar online gratuito',
+    price: 'Gratuito',
+    certificate: 'Consultar organização',
+    organizer: 'Ordem dos Farmacêuticos — Colégio de Análises Clínicas e Genética Humana',
+    link: 'https://ordemfarmaceuticos.pt/pt/eventos/webinar-hemocromatose/',
+    region: 'Online',
+    description:
+      'Sessão dedicada à hemocromatose, diagnóstico laboratorial e genética humana.',
+  },
+  {
+    title: 'Urines get no respect: From afterthought to asset in diagnostic stewardship',
+    date: '24 Junho 2026',
+    startDate: '2026-06-24',
+    category: 'Qualidade',
+    type: 'Webinar',
+    price: 'Consultar inscrição',
+    certificate: 'Consultar organização',
+    organizer: 'ADLM',
+    link: 'https://myadlm.org/education/continuing-education',
+    region: 'Online',
+    description:
+      'Webinar sobre urinálise, diagnostic stewardship e qualidade laboratorial.',
+  },
+  {
+    title: 'New Rapid Microbial Testing System with Results in Hours',
+    date: '25 Junho 2026',
+    startDate: '2026-06-25',
+    category: 'Microbiologia / Infeção',
+    type: 'Webinar online',
+    price: 'Consultar inscrição',
+    certificate: 'Consultar organização',
+    organizer: 'RapidMicrobiology',
+    link: 'https://www.rapidmicrobiology.com/events/all/webinar',
+    region: 'Online',
+    description:
+      'Webinar sobre novas tecnologias para diagnóstico microbiológico rápido.',
+  },
+  {
+    title: 'EHA Scientific Meetings & Webinar Activities 2026',
+    date: '2026',
+    startDate: '2026-07-01',
+    category: 'Hematologia',
+    type: 'Série de webinars e sessões online',
+    price: 'Consultar inscrição',
+    certificate: 'Consultar organização',
+    organizer: 'European Hematology Association',
+    link: 'https://ehaweb.org/',
+    region: 'Online',
+    description:
+      'Série contínua de webinars e sessões online sobre leucemias, linfomas, hemostase, hemoglobinopatias e hematologia clínica.',
   },
   {
     title: 'Boas práticas no exame de urina de rotina em laboratório',
     date: '13 Agosto 2026',
+    startDate: '2026-08-13',
     category: 'Qualidade',
     type: 'Formação online',
     price: 'Consultar',
@@ -71,8 +117,23 @@ const events = [
       'Formação sobre boas práticas no exame de urina de rotina em laboratório.',
   },
   {
+    title: '20th International Conference on Pathology and Laboratory Medicine',
+    date: '7–8 Setembro 2026',
+    startDate: '2026-09-07',
+    category: 'Medicina Laboratorial',
+    type: 'Congresso internacional',
+    price: 'Consultar inscrição',
+    certificate: 'Consultar organização',
+    organizer: 'Europe Annual Conferences',
+    link: 'https://laboratorymedicine.europeannualconferences.com/',
+    region: 'Amesterdão',
+    description:
+      'Congresso internacional dedicado à patologia, medicina laboratorial e diagnóstico.',
+  },
+  {
     title: 'Programa de Formação Avançada em Hematologia',
     date: 'Setembro 2025 – Julho 2027',
+    startDate: '2026-09-01',
     category: 'Hematologia',
     type: 'Programa de formação online',
     price: 'Gratuito',
@@ -84,8 +145,51 @@ const events = [
       'Programa de formação avançada composto por sessões semanais online destinadas à atualização científica em Hematologia.',
   },
   {
+    title: "PAM 2026 — Porto's Autoimmune Meeting",
+    date: '1–3 Outubro 2026',
+    startDate: '2026-10-01',
+    category: 'Autoimunidade',
+    type: 'Reunião científica presencial',
+    price: 'Consultar inscrição',
+    certificate: 'Consultar organização',
+    organizer: "Porto's Autoimmune Meeting",
+    link: 'https://portoautoimmunemeeting.pt/',
+    region: 'Portugal',
+    description:
+      'Encontro científico dedicado à autoimunidade, com foco na atualização e discussão multidisciplinar.',
+  },
+  {
+    title: 'Análise Computacional e Bioinformática de Variantes em Doença Genética',
+    date: '12–16 Outubro 2026',
+    startDate: '2026-10-12',
+    category: 'Genética Molecular',
+    type: 'Curso presencial',
+    price: 'Consultar inscrição',
+    certificate: 'Consultar organização',
+    organizer: 'Instituto Nacional de Saúde Doutor Ricardo Jorge (INSA)',
+    link: 'https://www.insa.min-saude.pt/',
+    region: 'INSA, Lisboa',
+    description:
+      'Curso de 35h sobre NGS, variant calling, priorização de variantes, bioinformática clínica e casos práticos laboratoriais.',
+  },
+  {
+    title: '18.ª Reunião Científica da SPML',
+    date: '29–31 Outubro 2026',
+    startDate: '2026-10-29',
+    category: 'Medicina Laboratorial',
+    type: 'Reunião científica presencial',
+    price: 'Consultar inscrição',
+    certificate: 'Consultar organização',
+    organizer: 'Sociedade Portuguesa de Medicina Laboratorial',
+    link: 'https://spml.pt/',
+    region: 'Portugal',
+    description:
+      'Reunião científica nacional dedicada à atualização, partilha de conhecimento e discussão de trabalhos científicos em medicina laboratorial.',
+  },
+  {
     title: 'Reunião Anual da Sociedade Portuguesa de Hematologia 2026',
     date: '5–7 Novembro 2026',
+    startDate: '2026-11-05',
     category: 'Hematologia',
     type: 'Reunião científica presencial',
     price: 'Consultar inscrição',
@@ -95,6 +199,48 @@ const events = [
     region: 'Centro de Congressos de Lisboa',
     description:
       'Reunião científica anual da Sociedade Portuguesa de Hematologia.',
+  },
+  {
+    title: 'Curso de Antibioterapia | 18.ª Edição',
+    date: '16–20 Novembro 2026',
+    startDate: '2026-11-16',
+    category: 'Microbiologia / Infeção',
+    type: 'Curso',
+    price: 'Pago',
+    certificate: 'Consultar organização',
+    organizer: 'Hospital da Luz Learning Health',
+    link: 'https://www.hospitaldaluz.pt/learninghealth/pt/formacao/calendario-de-cursos-e-eventos/682/curso-antibioterapia-18-edicao',
+    region: 'Portugal',
+    description:
+      'Curso dedicado à utilização de antibioterapia e atualização em infeção, organizado pela Hospital da Luz Learning Health.',
+  },
+  {
+    title: '30.ª Reunião Anual da Sociedade Portuguesa de Genética Humana',
+    date: '19–21 Novembro 2026',
+    startDate: '2026-11-19',
+    category: 'Genética Molecular',
+    type: 'Reunião científica presencial',
+    price: 'Consultar inscrição',
+    certificate: 'Consultar organização',
+    organizer: 'Sociedade Portuguesa de Genética Humana',
+    link: 'https://spgh.net/',
+    region: 'Lisboa',
+    description:
+      'Reunião anual da Sociedade Portuguesa de Genética Humana, dedicada à genética humana e genómica clínica.',
+  },
+  {
+    title: 'Curso em Aspetos Éticos e Sociais em Genética Clínica Laboratorial — 5.ª edição',
+    date: '2026',
+    startDate: '2026-12-01',
+    category: 'Genética Molecular',
+    type: 'Curso online',
+    price: 'Consultar inscrição',
+    certificate: 'Consultar organização',
+    organizer: 'Faculdade de Medicina da Universidade de Coimbra',
+    link: 'https://www.uc.pt/fmuc/',
+    region: 'Online',
+    description:
+      'Curso sobre interpretação de variantes, genética laboratorial, ética, aconselhamento genético e inteligência artificial em genética.',
   },
 ]
 
@@ -110,6 +256,16 @@ const categories = [
   'Qualidade',
 ]
 
+const sortedEvents = [...events].sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
+
+function getUpcomingEvents() {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const futureEvents = sortedEvents.filter((event) => new Date(event.startDate) >= today)
+  return futureEvents.length ? futureEvents : sortedEvents
+}
+
 function Button({ children, variant = 'primary', className = '' }) {
   return (
     <button className={`btn ${variant === 'outline' ? 'btn-outline' : 'btn-primary'} ${className}`}>
@@ -120,7 +276,11 @@ function Button({ children, variant = 'primary', className = '' }) {
 
 function SuggestEventLink({ children }) {
   return (
-    <a href={submissionFormUrl} target="_blank" rel="noreferrer">
+    <a
+      href={submissionFormUrl}
+      target="_blank"
+      rel="noreferrer"
+    >
       {children}
     </a>
   )
@@ -131,16 +291,17 @@ function EventCard({ event }) {
     <div className="card event-card">
       <div className="event-card-top">
         <span className="tag">{event.category}</span>
-        <ExternalLink size={17} />
+        <a href={event.link} target="_blank" rel="noreferrer" aria-label={`Abrir página oficial de ${event.title}`}>
+          <ExternalLink size={17} />
+        </a>
       </div>
       <h3>{event.title}</h3>
       <p className="muted">{event.organizer}</p>
       <p className="description">{event.description}</p>
-      <div className="details">
+      <div className="details compact-details">
         <p><strong>Data:</strong> {event.date}</p>
         <p><strong>Formato:</strong> {event.type}</p>
-        <p><strong>Custo:</strong> {event.price}</p>
-        <p><strong>Certificado:</strong> {event.certificate}</p>
+        <p><strong>Local:</strong> {event.region}</p>
       </div>
       <a href={event.link} target="_blank" rel="noreferrer">
         <Button variant="outline" className="full">Ver página oficial</Button>
@@ -150,7 +311,9 @@ function EventCard({ event }) {
 }
 
 function App() {
-  const featuredEvents = events.slice(0, 4)
+  const upcomingEvents = getUpcomingEvents()
+  const nextEvent = upcomingEvents[0]
+  const nextEventsPreview = upcomingEvents.slice(1, 4)
 
   return (
     <div className="page">
@@ -168,7 +331,7 @@ function App() {
             <a href="#about">Sobre</a>
             <a href="#events">Eventos</a>
             <a href="#categories">Categorias</a>
-            <a href="#organizers">Organizadores</a>
+            <a href="#submit">Organizadores</a>
             <a href="#newsletter">Newsletter</a>
           </nav>
 
@@ -200,31 +363,38 @@ function App() {
           <div className="card feature-card">
             <div className="card-header">
               <div>
-                <p className="eyebrow">Portugal & Lusofonia</p>
-                <h2>Eventos em destaque</h2>
+                <p className="eyebrow">Próximo evento</p>
+                <h2>{nextEvent.title}</h2>
               </div>
               <div className="soft-icon"><Filter size={20} /></div>
             </div>
 
-            <div className="event-list">
-              {featuredEvents.map((event) => (
-                <div className="event-row" key={event.title}>
-                  <div className="event-top">
-                    <div>
-                      <p className="event-title">{event.title}</p>
-                      <p className="muted">{event.organizer}</p>
-                    </div>
-                    <span className="tag">{event.category}</span>
-                  </div>
-                  <div className="event-meta">
-                    <span>{event.date}</span>
-                    <span>{event.type}</span>
-                    <span>{event.region}</span>
-                    <span>{event.price}</span>
-                  </div>
-                </div>
-              ))}
+            <p className="muted feature-organizer">{nextEvent.organizer}</p>
+
+            <div className="next-event-details">
+              <p><strong>Data:</strong> {nextEvent.date}</p>
+              <p><strong>Formato:</strong> {nextEvent.type}</p>
+              <p><strong>Local:</strong> {nextEvent.region}</p>
+              <span className="tag">{nextEvent.category}</span>
             </div>
+
+            <p className="description">{nextEvent.description}</p>
+
+            <a href={nextEvent.link} target="_blank" rel="noreferrer">
+              <Button className="full">Ver página oficial</Button>
+            </a>
+
+            {nextEventsPreview.length > 0 && (
+              <div className="next-preview">
+                <p className="eyebrow">A seguir</p>
+                {nextEventsPreview.map((event) => (
+                  <a href={event.link} target="_blank" rel="noreferrer" className="next-preview-row" key={event.title}>
+                    <span>{event.date}</span>
+                    <strong>{event.title}</strong>
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
@@ -251,20 +421,20 @@ function App() {
             <div className="section-head">
               <div>
                 <p className="eyebrow">Eventos e formações</p>
-                <h2>Descobre formação relevante sem perder tempo à procura.</h2>
+                <h2>Próximas oportunidades de formação.</h2>
               </div>
               <div className="search-box">
                 <Search size={18} />
-                Pesquisar por tema, área ou organizador
+                Eventos futuros ou formações ativas
               </div>
             </div>
 
             <div className="notice">
-              São apresentados prioritariamente eventos futuros ou formações atualmente disponíveis.
+              Cada cartão apresenta apenas a informação essencial. Consulta a página oficial para programa, inscrição e certificados.
             </div>
 
             <div className="grid-3">
-              {events.map((event) => <EventCard event={event} key={event.title} />)}
+              {upcomingEvents.map((event) => <EventCard event={event} key={event.title} />)}
             </div>
           </div>
         </section>
@@ -274,13 +444,15 @@ function App() {
             <p className="eyebrow">Categorias</p>
             <h2>Eventos organizados por área.</h2>
             <p>
-              As formações, cursos e reuniões científicas são distribuídos pelas respetivas áreas para facilitar a navegação.
+              Uma visão rápida das áreas com eventos disponíveis. A lista completa fica concentrada na secção de eventos.
             </p>
           </div>
 
           <div className="category-event-grid">
             {categories.map((category) => {
-              const matchingEvents = events.filter((event) => event.category === category)
+              const matchingEvents = upcomingEvents.filter((event) => event.category === category)
+              const nextCategoryEvent = matchingEvents[0]
+
               return (
                 <div className="category-panel" key={category}>
                   <div className="category-title-row">
@@ -289,19 +461,15 @@ function App() {
                   </div>
 
                   {matchingEvents.length > 0 ? (
-                    <div className="mini-event-list">
-                      {matchingEvents.map((event) => (
-                        <a
-                          href={event.link}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="mini-event"
-                          key={`${category}-${event.title}`}
-                        >
-                          <strong>{event.title}</strong>
-                          <span>{event.date} · {event.organizer}</span>
-                        </a>
-                      ))}
+                    <div className="category-summary">
+                      <p>
+                        <strong>{matchingEvents.length}</strong>{' '}
+                        {matchingEvents.length === 1 ? 'evento disponível' : 'eventos disponíveis'}
+                      </p>
+                      <a href="#events" className="mini-event">
+                        <strong>Próximo: {nextCategoryEvent.title}</strong>
+                        <span>{nextCategoryEvent.date}</span>
+                      </a>
                     </div>
                   ) : (
                     <p className="muted">Sem eventos adicionados nesta categoria por enquanto.</p>
@@ -309,34 +477,6 @@ function App() {
                 </div>
               )
             })}
-          </div>
-        </section>
-
-        <section id="organizers" className="container submit-section">
-          <div className="submit-card">
-            <div>
-              <div className="soft-icon"><HeartHandshake size={22} /></div>
-              <p className="eyebrow">Para organizadores</p>
-              <h2>Divulgue gratuitamente o seu evento.</h2>
-              <p>
-                O MedLab Calendar divulga congressos, webinars, cursos, workshops e reuniões científicas
-                relacionados com Medicina Laboratorial e áreas afins.
-              </p>
-              <p>
-                São bem-vindas submissões de sociedades científicas, universidades, hospitais, organizações
-                profissionais e empresas do setor da saúde e diagnóstico.
-              </p>
-            </div>
-
-            <div className="submit-copy">
-              <p>
-                Todos os eventos são revistos antes da publicação para garantir a sua relevância e exatidão.
-              </p>
-              <p>
-                <strong>Contacto:</strong> {contactEmail}
-              </p>
-              <SuggestEventLink><Button>Sugerir evento</Button></SuggestEventLink>
-            </div>
           </div>
         </section>
 
@@ -368,20 +508,23 @@ function App() {
           <div className="submit-card">
             <div>
               <div className="soft-icon"><Upload size={22} /></div>
-              <h2>Conheces uma formação relevante?</h2>
+              <h2>Para organizadores</h2>
               <p>
-                Ajuda a comunidade a descobrir cursos, webinars, congressos ou eventos científicos úteis para profissionais
-                de laboratório. A submissão é feita através de formulário Google Forms.
+                Organiza um congresso, webinar, curso, workshop ou reunião científica nas áreas da Medicina Laboratorial?
+                Submete o evento gratuitamente para revisão.
+              </p>
+              <p>
+                Contacto: <strong>{contactEmail}</strong>
               </p>
             </div>
 
             <div className="submit-copy">
               <p>
-                <strong>Informação ideal:</strong> título, data, organizador, área, formato, custo, certificado e link oficial.
+                São bem-vindas submissões de sociedades científicas, universidades, hospitais, organizações profissionais
+                e empresas do setor da saúde e diagnóstico.
               </p>
               <p>
-                <strong>Nota legal:</strong> o MedLab Calendar atua como plataforma de curadoria e divulgação.
-                Todos os cursos e eventos pertencem às respetivas entidades organizadoras.
+                Todos os eventos são revistos antes da publicação. A submissão não garante publicação automática.
               </p>
               <SuggestEventLink><Button>Sugerir evento</Button></SuggestEventLink>
             </div>

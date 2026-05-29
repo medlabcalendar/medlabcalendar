@@ -1,35 +1,13 @@
-# Google Forms — Submissão de Eventos
+# Configuração do formulário de submissão
 
-1. Cria um Google Form com estes campos:
-   - Nome do evento *
-   - Entidade organizadora *
-   - Tipo de evento *
-   - Data de início *
-   - Data de fim
-   - Formato *
-   - Local
-   - Área científica *
-   - Website oficial *
-   - Descrição
-   - Nome do contacto
-   - Email do contacto *
+1. Cria um Google Form para submissão de eventos.
+2. Copia o link público do formulário.
+3. No Vercel, adiciona a variável de ambiente:
 
-2. Nas respostas do Google Forms, ativa as notificações por email para:
+```text
+VITE_EVENT_SUBMISSION_FORM_URL=https://forms.gle/O_TEU_LINK
+```
 
-   medlabcalendar@gmail.com
+4. Faz redeploy do projeto.
 
-3. Copia o link público do formulário.
-
-4. No Vercel, vai a:
-
-   Project Settings → Environment Variables
-
-5. Adiciona:
-
-   VITE_EVENT_SUBMISSION_FORM_URL=https://forms.gle/O_TEU_LINK
-
-6. Faz Redeploy.
-
-Enquanto não configurares a variável, o botão usa o placeholder:
-
-https://forms.gle/COLOCA_AQUI_O_LINK_DO_GOOGLE_FORM
+O botão "Sugerir evento" passa a abrir o formulário numa nova aba.
