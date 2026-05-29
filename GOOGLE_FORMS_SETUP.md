@@ -1,13 +1,24 @@
-# Configuração do formulário de submissão
+# Google Forms — Submissão de eventos
 
-1. Cria um Google Form para submissão de eventos.
+O botão **Sugerir evento** está preparado para abrir um Google Form.
+
+## Como ativar
+
+1. Cria um Google Form.
 2. Copia o link público do formulário.
-3. No Vercel, adiciona a variável de ambiente:
+3. No Vercel, vai a **Project > Settings > Environment Variables**.
+4. Adiciona:
 
 ```text
 VITE_EVENT_SUBMISSION_FORM_URL=https://forms.gle/O_TEU_LINK
 ```
 
-4. Faz redeploy do projeto.
+5. Faz **Redeploy**.
 
-O botão "Sugerir evento" passa a abrir o formulário numa nova aba.
+## Nota
+
+Se esta variável ainda não existir, o botão abre um email para:
+
+```text
+medlabcalendar@gmail.com
+```
