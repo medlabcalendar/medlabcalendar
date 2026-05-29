@@ -1,21 +1,17 @@
-# MedLab Calendar
+# MedLab Calendar — atualização
 
-Calendário de formação para profissionais de laboratório.
+Este pacote inclui ficheiros prontos para adicionar ao projeto no GitHub:
 
-## Atualização
+- `src/data/events.ts` — inclui os 2 eventos da SPH adicionados.
+- `src/components/AboutSection.tsx` — nova secção “Sobre”.
+- `src/components/OrganizersSection.tsx` — nova secção “Para Organizadores” com email visível e botão para Google Forms.
+- `.env.local.example` — variável para o link do Google Form.
+- `GOOGLE_FORM_FIELDS.md` — campos recomendados para criar o formulário.
 
-Inclui novos eventos e formações:
-- Webinar Hemocromatose
-- SPGH 2026
-- EURORDIS 2026
-- ADLM Urines get no respect
-- 20th International Conference on Pathology and Laboratory Medicine
-- EHA Scientific Meetings & Webinar Activities 2026
-- Biolog / RapidMicrobiology
-- Rapid Microbial Testing System
-- Curso em Aspetos Éticos e Sociais em Genética Clínica Laboratorial
-- INSA Bioinformática de Variantes
+Depois de copiares os ficheiros, adiciona o link do Google Form em Vercel:
 
-## Submissão de eventos
+```env
+NEXT_PUBLIC_EVENT_SUBMISSION_FORM_URL=https://forms.gle/O_TEU_LINK
+```
 
-O botão "Sugerir evento" abre um email pré-preenchido para medlabcalendar@gmail.com.
+E faz redeploy.
