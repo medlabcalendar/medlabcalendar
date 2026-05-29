@@ -2,27 +2,20 @@
 
 Calendário de formação para profissionais de laboratório.
 
-## Versão final limpa
+## Atualização
 
-Inclui:
-- Subtítulo: Laboratory Medicine Education Hub
-- Introdução em português europeu
-- Botão "Sugerir evento" funcional por email
-- Categorias científicas finais:
-  - Medicina Laboratorial
-  - Autoimunidade
-  - Bioquímica Clínica
-  - Hematologia
-  - Coagulação e Hemostase
-  - Imunologia
-  - Microbiologia / Infeção
-  - Genética Molecular
-  - Qualidade
-- Sem POCT
-- Sem "Reuniões científicas" como categoria
-- Sem secção própria ProMeQuaLab
-- Apenas eventos futuros ou formações atuais:
-  - SPML 2026
-  - PAM 2026
-  - Curso de Antibioterapia 2026
-  - Boas práticas no exame de urina de rotina em laboratório
+Inclui novos eventos e formações:
+- Webinar Hemocromatose
+- SPGH 2026
+- EURORDIS 2026
+- ADLM Urines get no respect
+- 20th International Conference on Pathology and Laboratory Medicine
+- EHA Scientific Meetings & Webinar Activities 2026
+- Biolog / RapidMicrobiology
+- Rapid Microbial Testing System
+- Curso em Aspetos Éticos e Sociais em Genética Clínica Laboratorial
+- INSA Bioinformática de Variantes
+
+## Submissão de eventos
+
+O botão "Sugerir evento" abre um email pré-preenchido para medlabcalendar@gmail.com.
