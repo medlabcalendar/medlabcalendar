@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { CalendarDays, Mail, Search, Upload, ExternalLink, Microscope, Filter, CheckCircle2, HeartHandshake, ClipboardList, Star, MapPin } from 'lucide-react'
 import './styles.css'
 
 const contactEmail = 'medlabcalendar@gmail.com'
-const googleFormUrl = import.meta.env.VITE_GOOGLE_FORM_URL || 'https://docs.google.com/forms/d/e/1FAIpQLSc22SEwuG9LJnLsQ0tgRrJA9zx2Fsr7cZ6iA9g06qRnemOxVw/viewform?usp=publish-editor'
+const googleFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSc22SEwuG9LJnLsQ0tgRrJA9zx2Fsr7cZ6iA9g06qRnemOxVw/viewform?usp=publish-editor'
 
 const events = [
   {
@@ -238,6 +238,37 @@ function submissionHref() {
   return `mailto:${contactEmail}?subject=Sugest%C3%A3o%20de%20evento%20para%20o%20MedLab%20Calendar&body=Ol%C3%A1%2C%0A%0AGostaria%20de%20sugerir%20o%20seguinte%20evento%3A%0A%0AT%C3%ADtulo%3A%0AData%3A%0AOrganizador%3A%0A%C3%81rea%3A%0AFormato%3A%0ALink%20oficial%3A%0A%0AObrigada.`
 }
 
+
+function normalizeText(value) {
+  return String(value || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+}
+
+function eventSearchText(event) {
+  return normalizeText([
+    event.title,
+    event.category,
+    event.type,
+    event.organizer,
+    event.region,
+    event.description,
+    event.date,
+  ].join(' '))
+}
+
+function eventMatchesSearch(event, searchTerm, activeCategory) {
+  const matchesCategory = activeCategory === 'Todos' || event.category === activeCategory
+  if (!matchesCategory) return false
+
+  const tokens = normalizeText(searchTerm).split(/\s+/).filter(Boolean)
+  if (!tokens.length) return true
+
+  const haystack = eventSearchText(event)
+  return tokens.every((token) => haystack.includes(token))
+}
+
 function ButtonLink({ children, href, variant = 'primary', className = '', external = false }) {
   return (
     <a
@@ -345,6 +376,18 @@ function CalendarView() {
 function App() {
   const featuredEvents = sortedEvents.slice(0, 4)
   const highlightedEvent = nextUpcomingEvent()
+  const [searchTerm, setSearchTerm] = useState('')
+  const [activeCategory, setActiveCategory] = useState('Todos')
+
+  const filteredEvents = useMemo(
+    () => sortedEvents.filter((event) => eventMatchesSearch(event, searchTerm, activeCategory)),
+    [searchTerm, activeCategory]
+  )
+
+  const clearFilters = () => {
+    setSearchTerm('')
+    setActiveCategory('Todos')
+  }
 
   return (
     <div className="page">
@@ -361,7 +404,7 @@ function App() {
             <a href="#about">Sobre</a>
             <a href="#events">Eventos</a>
             <a href="#calendar">Calendário</a>
-            <a href="#organizers">Submeter</a>
+            <SuggestEventLink variant="outline" className="nav-submit">Submeter evento</SuggestEventLink>
           </nav>
           <ButtonLink href="#events">Ver eventos</ButtonLink>
         </div>
@@ -413,10 +456,42 @@ function App() {
           <div className="container">
             <div className="section-head">
               <div><p className="eyebrow">Eventos e formações</p><h2>Próximas oportunidades.</h2></div>
-              <div className="search-box"><Search size={18} /> Pesquisa visual por tema, área ou organizador</div>
+              <label className="search-box" htmlFor="event-search">
+                <Search size={18} />
+                <input
+                  id="event-search"
+                  type="search"
+                  value={searchTerm}
+                  onChange={(event) => setSearchTerm(event.target.value)}
+                  placeholder="Pesquisar por categoria, evento, palavra ou organizador"
+                />
+              </label>
             </div>
-            <div className="category-chips">{categoryLabels.map((category) => <span key={category}>{category}</span>)}</div>
-            <div className="grid-3">{sortedEvents.map((event) => <EventCard event={event} compact key={event.title} />)}</div>
+            <div className="category-chips">
+              {['Todos', ...categoryLabels].map((category) => (
+                <button
+                  type="button"
+                  className={activeCategory === category ? 'active' : ''}
+                  key={category}
+                  onClick={() => setActiveCategory(category)}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+            <div className="results-summary">
+              <span>{filteredEvents.length} evento{filteredEvents.length === 1 ? '' : 's'} encontrado{filteredEvents.length === 1 ? '' : 's'}</span>
+              {(searchTerm || activeCategory !== 'Todos') && <button type="button" onClick={clearFilters}>Limpar pesquisa</button>}
+            </div>
+            {filteredEvents.length > 0 ? (
+              <div className="grid-3">{filteredEvents.map((event) => <EventCard event={event} compact key={event.title} />)}</div>
+            ) : (
+              <div className="empty-state">
+                <h3>Sem resultados para esta pesquisa.</h3>
+                <p>Experimenta pesquisar por outra palavra, categoria, nome do evento ou organizador.</p>
+                <button type="button" className="btn btn-primary" onClick={clearFilters}>Ver todos os eventos</button>
+              </div>
+            )}
           </div>
         </section>
 
@@ -427,8 +502,8 @@ function App() {
             <div>
               <div className="soft-icon"><ClipboardList size={22} /></div>
               <p className="eyebrow">Para Organizadores</p>
-              <h2>Divulgue cursos, webinars e reuniões científicas relevantes.</h2>
-              <p>Envie título, data, organizador, área, formato, local, custo, certificado e link oficial.</p>
+              <h2>Submeta cursos, webinars e reuniões científicas relevantes.</h2>
+              <p>Preencha o formulário para propor eventos de interesse para a comunidade laboratorial.</p>
             </div>
             <div className="organizers-copy">
               <p>A plataforma atua como serviço de curadoria e divulgação; os eventos pertencem às respetivas entidades organizadoras.</p>
