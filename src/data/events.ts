@@ -58,3 +58,19 @@ export const events: MedLabEvent[] = [
     featured: true,
   },
 ];
+{
+  id: 'actualizacion-medicina-personalizada-semedlab-2026',
+  title: 'Actualización en Medicina Personalizada',
+  organization: 'SEMEDLAB - Sociedad Española de Medicina de Laboratorio',
+  startDate: '2026-10-01',
+  endDate: '2027-06-15',
+  dateLabel: '1 Outubro 2026 – 15 Junho 2027',
+  location: 'Online',
+  format: 'Online',
+  type: 'Curso avançado online',
+  category: 'Genética Molecular',
+  description: 'Curso avançado dedicado à medicina personalizada e de precisão. Inclui 8 módulos especializados sobre genética, biomarcadores, diagnóstico molecular e aplicações clínicas da medicina personalizada, com fórum de discussão entre participantes e especialistas.',
+  url: 'https://formacion.semedlab.es',
+  featured: true,
+},
+];
