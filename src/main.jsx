@@ -1,6 +1,27 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { CalendarDays, Search, ExternalLink, Microscope, Filter, CheckCircle2, HeartHandshake, ClipboardList, Download, Archive, ChevronLeft, ChevronRight } from 'lucide-react'
+import {
+  CalendarDays,
+  Search,
+  ExternalLink,
+  Microscope,
+  Filter,
+  CheckCircle2,
+  HeartHandshake,
+  ClipboardList,
+  Download,
+  Archive,
+  ChevronLeft,
+  ChevronRight,
+  Dna,
+  Droplets,
+  ShieldCheck,
+  FlaskConical,
+  Ambulance,
+  BarChart3,
+  Lightbulb,
+  TestTube2
+} from 'lucide-react'
 import './styles.css'
 
 const contactEmail = 'medlabcalendar@gmail.com'
@@ -864,30 +885,30 @@ function FeatureStyles() {
 
 
 const categoryIcons = {
-  'Genética Molecular': '🧬',
-  'Microbiologia / Infeção': '🦠',
-  'Hematologia': '🩸',
-  'Qualidade': '✅',
-  'Medicina Laboratorial': '🔬',
-  'Autoimunidade': '🛡️',
-  'Coagulação e Hemostase': '🧪',
-  'Anatomia Patológica': '🔎',
-  'Bioquímica Clínica': '⚗️',
-  'Neurologia / Bioquímica': '🧠',
-  'Qualidade / Urinálise': '💧',
-  'Hematologia / Qualidade': '🩸',
-  'Hematologia / Oncologia': '🧫',
-  'Bioquímica / Urgência': '🚑',
-  'Biologia Molecular': '🧬',
-  'Qualidade / Pré-analítica': '📋',
-  'Investigação / Bioestatística': '📊',
-  'Qualidade / POCT': '🧾',
-  'Bioquímica Clínica / Nefrologia': '🫘',
-  'Genética / Inovação': '💡',
+  'Genética Molecular': Dna,
+  'Microbiologia / Infeção': Microscope,
+  'Hematologia': Droplets,
+  'Qualidade': ShieldCheck,
+  'Medicina Laboratorial': FlaskConical,
+  'Autoimunidade': ShieldCheck,
+  'Coagulação e Hemostase': Droplets,
+  'Anatomia Patológica': Search,
+  'Bioquímica Clínica': TestTube2,
+  'Neurologia / Bioquímica': TestTube2,
+  'Qualidade / Urinálise': ShieldCheck,
+  'Hematologia / Qualidade': Droplets,
+  'Hematologia / Oncologia': Droplets,
+  'Bioquímica / Urgência': Ambulance,
+  'Biologia Molecular': Dna,
+  'Qualidade / Pré-analítica': ShieldCheck,
+  'Investigação / Bioestatística': BarChart3,
+  'Qualidade / POCT': ShieldCheck,
+  'Bioquímica Clínica / Nefrologia': TestTube2,
+  'Genética / Inovação': Lightbulb
 }
 
 function getCategoryIcon(category) {
-  return categoryIcons[category] || '🔬'
+  return categoryIcons[category] || FlaskConical
 }
 
 function App() {
@@ -1076,9 +1097,12 @@ function App() {
               const matchingEvents = activeEvents.filter((event) => event.category === category)
               return (
                 <button type="button" className="category-icon-card" key={category} onClick={() => openCategory(category)}>
-                  <span className="category-icon" aria-hidden="true">{getCategoryIcon(category)}</span>
-                  <strong>{category}</strong>
-                  <span>{matchingEvents.length} evento(s)</span>
+                  <span className="category-icon" aria-hidden="true">
+  {(() => {
+    const Icon = getCategoryIcon(category)
+    return <Icon size={32} />
+  })()}
+</span>
                 </button>
               )
             })}
