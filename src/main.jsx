@@ -1,3 +1,8 @@
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.jsx'
+import './index.css'
+
 // ==========================================
 // 1. EVENTOS ATIVOS (Futuros ou a Decorrer)
 // ==========================================
@@ -582,6 +587,13 @@ export const archivedEvents = [
     "organizer": "BD Biosciences",
     "link": "https://www.bd.com",
     "region": "Online",
-    "description": "Sistemas automatizados de hemoculturas e identificação rápida."
+    "description": "Sessão de esclarecimento sobre urinálise e boas práticas na execução do exame básico de urina, com a palestrante Michelle Lima Garcez."
   }
 ];
+
+// O QUE PRECISAS PARA APLICAÇÃO VOLTAR A LIGAR:
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)
