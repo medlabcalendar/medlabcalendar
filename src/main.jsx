@@ -1,6 +1,5 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.jsx' // Se o Vercel der erro nesta linha por falta do ficheiro, podes apagá-la
 import './index.css'
 
 // ==========================================
@@ -231,7 +230,7 @@ export const events = [
   {
     "title": "Webinar | Da lâmina ao diagnóstico: o poder da Imunohistoquímica na anatomia patológica",
     "date": "15 Junho 2026, 19h00",
-    "category": "Anatomia Patológica",
+    "category": "Anatomia Patológica", // ✅ REVERTIDO PARA ANATOMIA PATOLÓGICA APENAS
     "type": "Webinar online",
     "price": "Gratuito (Inscrição obrigatória)",
     "certificate": "Sim",
@@ -260,7 +259,7 @@ export const events = [
     "price": "Consultar",
     "certificate": "Sim",
     "organizer": "SEMEDLAB",
-    "link": "https://semedlab.es/curso/casos-clinicos-de-biologia-hematologica/",
+    "link": "https://semedlab.es/curso/casos-clinicos-de-biología-hematologica/",
     "region": "Online",
     "description": "Discussão prática e interativa de casos clínicos reais no âmbito da hematologia laboratorial e biológica."
   },
@@ -358,7 +357,7 @@ export const events = [
     "organizer": "APsa & Grupo Português de Mieloma Múltiplo",
     "link": "Consultar Redes Sociais / LinkedIn",
     "region": "Forte de São Francisco, Chaves",
-    "description": "Jornadas dedicadas ao Mieloma Múltiplo abrangendo diagnóstico laboratorial, casos clínicos interativos, tratamento com células CAR-T e perspetivas futuras."
+    "description": "Jornadas dedicadas ao Mieloma Múltiplo abrangendo diagnóstico laboratorial, casos clínicos interativos, tratamento com células CAR-T e perspetivas futures."
   },
   {
     "title": "Reuniões de Casos Clínicos de Mieloma Múltiplo",
@@ -541,3 +540,174 @@ export const archivedEvents = [
     "type": "Webinar online",
     "price": "Gratuito",
     "certificate": "Sim",
+    "organizer": "AACC Europe",
+    "link": "https://www.aacc.org",
+    "region": "Online",
+    "description": "Revisão sobre o papel dos biomarcadores cardíacos na urgência e rotina."
+  },
+  {
+    "title": "Jornadas de Primavera de Doenças Infeciosas",
+    "date": "23-24 Abril 2026",
+    "category": "Microbiologia / Infeção",
+    "type": "Jornadas Presenciais",
+    "price": "Consultar",
+    "certificate": "Sim",
+    "organizer": "SPMI",
+    "link": "https://www.spmi.pt",
+    "region": "Portugal",
+    "description": "Discussão multidisciplinar de patologia infeciosa e diagnóstico microbiológico."
+  },
+  {
+    "title": "Workshop: Validação de Métodos segundo a ISO 15189:2022",
+    "date": "07 Maio 2026",
+    "category": "Qualidade",
+    "type": "Workshop Presencial",
+    "price": "Consultar",
+    "certificate": "Sim",
+    "organizer": "RELACRE",
+    "link": "https://www.relacre.pt",
+    "region": "Lisboa, Portugal",
+    "description": "Sessão prática focada nos requisitos de validação da nova norma ISO 15189."
+  },
+  {
+    "title": "Simpósio Ibero-Americano de Erros Inatos do Metabolismo",
+    "date": "14-15 Maio 2026",
+    "category": "Bioquímica Clínica",
+    "type": "Simpósio Presencial",
+    "price": "Consultar",
+    "certificate": "Sim",
+    "organizer": "Insa",
+    "link": "https://www.insa.min-saude.pt",
+    "region": "Lisboa, Portugal",
+    "description": "Rastreio e novas abordagens diagnósticas em doenças metabólicas raras."
+  },
+  {
+    "title": "Webinar: Automação e Futuro da Microbiologia",
+    "date": "28 Maio 2026",
+    "category": "Microbiologia / Infeção",
+    "type": "Webinar online",
+    "price": "Gratuito",
+    "certificate": "Sim",
+    "organizer": "BD Biosciences",
+    "link": "https://www.bd.com",
+    "region": "Online",
+    "description": "Sessão informativa sobre automação em microbiologia clínica e rastreios rápidos."
+  }
+];
+
+// ==========================================
+// 📅 COMPONENTE INTERFEZ DO CALENDÁRIO
+// ==========================================
+function CalendarioMensal() {
+  const [mesSelecionado, setMesSelecionado] = useState("Junho 2026");
+
+  const obterMesAno = (dateStr) => {
+    const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+    const mesEncontrado = meses.find(m => dateStr.toLowerCase().includes(m.toLowerCase()));
+    const anoEncontrado = dateStr.match(/202[6-7]/);
+    const ano = anoEncontrado ? anoEncontrado[0] : '2026';
+    return mesEncontrado ? `${mesEncontrado} ${ano}` : `Contínuos ${ano}`;
+  };
+
+  const todosEventos = [...events, ...archivedEvents];
+
+  const eventosAgrupados = todosEventos.reduce((acc, ev) => {
+    const chave = obterMesAno(ev.date);
+    if (!acc[chave]) acc[chave] = [];
+    acc[chave].push(ev);
+    return acc;
+  }, {});
+
+  const ordemMeses = [
+    "Fevereiro 2026", "Março 2026", "Abril 2026", "Maio 2026", 
+    "Junho 2026", "Julho 2026", "Agosto 2026", "Setembro 2026", 
+    "Outubro 2026", "Novembro 2026", "Contínuos 2026", "Contínuos 2027"
+  ];
+
+  const mesesDisponiveis = Object.keys(eventosAgrupados).sort((a, b) => {
+    return ordemMeses.indexOf(a) - ordemMeses.indexOf(b);
+  });
+
+  return (
+    <div style={{ fontFamily: 'system-ui, -apple-system, sans-serif', maxWidth: '1000px', margin: '0 auto', padding: '20px', color: '#1a202c' }}>
+      
+      {/* HEADER DO SITE */}
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #e2e8f0', paddingBottom: '20px', marginBottom: '30px', flexWrap: 'wrap', gap: '15px' }}>
+        <div>
+          <h1 style={{ margin: 0, fontSize: '28px', color: '#1e3a8a', fontWeight: '800' }}>📅 MedLab Calendar</h1>
+          <p style={{ margin: '5px 0 0 0', color: '#4a5568', fontSize: '15px' }}>Atualizações e Eventos de Medicina Laboratorial</p>
+        </div>
+        <a 
+          href={FORM_LINK} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          style={{ backgroundColor: '#2563eb', color: 'white', padding: '12px 24px', borderRadius: '8px', textDecoration: 'none', fontWeight: '700', fontSize: '14px', boxShadow: '0 2px 4px rgba(37,99,235,0.2)' }}
+        >
+          ➕ Sugerir Novo Evento
+        </a>
+      </header>
+
+      {/* SELECÇÃO DE MESES */}
+      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '30px', backgroundColor: '#f8fafc', padding: '12px', borderRadius: '12px' }}>
+        {mesesDisponiveis.map(mes => {
+          const ePassado = ["Fevereiro 2026", "Março 2026", "Abril 2026", "Maio 2026"].includes(mes);
+          return (
+            <button 
+              key={mes} 
+              onClick={() => setMesSelecionado(mes)}
+              style={{
+                padding: '10px 18px', borderRadius: '20px', border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: '600',
+                backgroundColor: mesSelecionado === mes ? '#2563eb' : '#ffffff',
+                color: mesSelecionado === mes ? '#ffffff' : (ePassado ? '#94a3b8' : '#4a5568'),
+                border: ePassado ? '1px dashed #cbd5e1' : '1px solid #e2e8f0',
+                boxShadow: mesSelecionado === mes ? '0 4px 6px rgba(37,99,235,0.2)' : '0 1px 2px rgba(0,0,0,0.05)'
+              }}
+            >
+              {mes} {ePassado && "📜"}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* LISTAGEM DE EVENTOS */}
+      <div>
+        <h2 style={{ color: '#1e3a8a', fontSize: '22px', fontWeight: '700', marginBottom: '20px', borderLeft: '4px solid #2563eb', paddingLeft: '10px' }}>
+          Eventos em {mesSelecionado} ({eventosAgrupados[mesSelecionado]?.length || 0})
+        </h2>
+        
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          {eventosAgrupados[mesSelecionado]?.map((ev, i) => (
+            <div key={i} style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '22px', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '12px' }}>
+                <span style={{ fontSize: '11px', backgroundColor: '#eff6ff', color: '#1e40af', padding: '5px 10px', borderRadius: '6px', fontWeight: '700', textTransform: 'uppercase' }}>{ev.category}</span>
+                <span style={{ fontSize: '12px', color: '#d97706', backgroundColor: '#fef3c7', padding: '4px 10px', borderRadius: '6px', fontWeight: '600' }}>{ev.type}</span>
+              </div>
+              <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', color: '#0f172a', fontWeight: '700' }}>{ev.title}</h3>
+              <p style={{ margin: '0 0 14px 0', fontSize: '14px', color: '#475569', fontWeight: '500' }}>🗓️ <strong>{ev.date}</strong> &nbsp;|&nbsp; 📍 {ev.region}</p>
+              <p style={{ backgroundColor: '#f8fafc', padding: '14px', borderRadius: '8px', fontSize: '14px', color: '#334155', lineHeight: '1.5', margin: '0 0 16px 0' }}>{ev.description}</p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: '#64748b', borderTop: '1px solid #f1f5f9', paddingTop: '14px', flexWrap: 'wrap', gap: '10px' }}>
+                <span><strong>Organização:</strong> {ev.organizer}</span>
+                <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                  <span><strong>Preço:</strong> {ev.price}</span>
+                  {ev.link && ev.link.startsWith('http') && (
+                    <a href={ev.link} target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb', fontWeight: '700', textDecoration: 'none' }}>Website ↗</a>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// RENDERIZAÇÃO
+const elementoRaiz = document.getElementById('root');
+if (elementoRaiz) {
+  ReactDOM.createRoot(elementoRaiz).render(
+    <React.StrictMode>
+      <CalendarioMensal />
+    </React.StrictMode>
+  );
+}
