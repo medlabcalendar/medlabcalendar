@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { CalendarDays, Search, ExternalLink, Microscope, Filter, CheckCircle2, HeartHandshake, ClipboardList, Download, Archive, ChevronLeft, ChevronRight } from 'lucide-react'
 import './styles.css'
@@ -6,7 +6,9 @@ import './styles.css'
 const contactEmail = 'medlabcalendar@gmail.com'
 const googleFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSc22SEwuG9LJnLsQ0tgRrJA9zx2Fsr7cZ6iA9g06qRnemOxVw/viewform'
 
-const events = [
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRNMDWDdFpEBXYUUKpw87IYCdmy_Y6bTGKzpKpDuundPcyfxvEZZ9SvSzQ_rTb2TZMk0z-T6b5Yzs4f/pub?output=csv'
+
+const fallbackEvents = [
   {
     "title": "Actualización en Medicina Personalizada",
     "date": "1 Outubro 2026 – 15 Junho 2027",
@@ -528,9 +530,88 @@ function normalizeCategory(category) {
   return category
 }
 
+function parseCSV(text) {
+  const rows = []
+  let row = []
+  let value = ''
+  let insideQuotes = false
+
+  for (let i = 0; i < text.length; i += 1) {
+    const char = text[i]
+    const nextChar = text[i + 1]
+
+    if (char === '"' && insideQuotes && nextChar === '"') {
+      value += '"'
+      i += 1
+    } else if (char === '"') {
+      insideQuotes = !insideQuotes
+    } else if (char === ',' && !insideQuotes) {
+      row.push(value.trim())
+      value = ''
+    } else if ((char === '
+' || char === '
+') && !insideQuotes) {
+      if (char === '
+' && nextChar === '
+') i += 1
+      row.push(value.trim())
+      if (row.some((cell) => cell !== '')) rows.push(row)
+      row = []
+      value = ''
+    } else {
+      value += char
+    }
+  }
+
+  if (value || row.length) {
+    row.push(value.trim())
+    if (row.some((cell) => cell !== '')) rows.push(row)
+  }
+
+  if (rows.length < 2) return []
+
+  const headers = rows[0].map((header) => normalizeText(header).replace(/[^a-z0-9]+/g, ''))
+
+  return rows.slice(1).map((cells) => {
+    const raw = {}
+    headers.forEach((header, index) => {
+      raw[header] = cells[index] || ''
+    })
+
+    const activeValue = normalizeText(raw.ativo || raw.ativo_ || raw.status || '')
+    const isActive = !activeValue || ['sim', 'yes', 'published', 'publicado', 'ativo'].some((word) => activeValue.includes(word))
+
+    return {
+      title: raw.titulo || raw.title || '',
+      date: raw.data || raw.date || raw.startdate || raw.datainicio || '',
+      startDateRaw: raw.startdate || raw.datainicio || '',
+      endDateRaw: raw.enddate || raw.datafim || '',
+      category: normalizeCategory(raw.categoria || raw.category || ''),
+      type: raw.tipoformato || raw.formato || raw.type || '',
+      organizer: raw.organizador || raw.organizer || '',
+      link: raw.linkoficial || raw.link || raw.url || '',
+      price: raw.custo || raw.price || raw.preco || '',
+      certificate: raw.certificado || raw.certificate || '',
+      region: raw.regiao || raw.region || raw.local || '',
+      description: raw.descricao || raw.description || '',
+      status: isActive ? 'published' : 'draft',
+    }
+  }).filter((event) => event.title && event.status === 'published')
+}
+
 function parseEventDate(dateText = '') {
   const original = String(dateText)
   const clean = normalizeText(original).replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim()
+
+  const isoRange = clean.match(/(20\d{2})-(\d{2})-(\d{2})(?:\s*-\s*(20\d{2})-(\d{2})-(\d{2}))?/)
+  if (isoRange) {
+    const start = new Date(Number(isoRange[1]), Number(isoRange[2]) - 1, Number(isoRange[3]))
+    const end = isoRange[4]
+      ? new Date(Number(isoRange[4]), Number(isoRange[5]) - 1, Number(isoRange[6]))
+      : new Date(start)
+    end.setHours(23, 59, 59, 999)
+    return { start, end, isApproximate: false }
+  }
 
   const yearMatches = [...clean.matchAll(/20\d{2}/g)].map((match) => Number(match[0]))
   const monthMatches = [...clean.matchAll(/janeiro|fevereiro|marco|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro/g)].map((match) => match[0])
@@ -639,9 +720,9 @@ function SuggestEventLink({ children }) {
   return <a href={submissionHref()} target={googleFormUrl ? '_blank' : undefined} rel={googleFormUrl ? 'noreferrer' : undefined}>{children}</a>
 }
 
-function getPreparedEvents() {
+function getPreparedEvents(eventsSource) {
   const now = new Date()
-  return events
+  return eventsSource
     .map((event) => {
       const normalizedEvent = { ...event, category: normalizeCategory(event.category) }
       const parsedDate = parseEventDate(normalizedEvent.date)
@@ -810,7 +891,30 @@ function getCategoryIcon(category) {
 }
 
 function App() {
-  const preparedEvents = useMemo(() => getPreparedEvents(), [])
+  const [rawEvents, setRawEvents] = useState(fallbackEvents)
+  const [sheetStatus, setSheetStatus] = useState('A carregar eventos da Google Sheet...')
+
+  useEffect(() => {
+    fetch(SHEET_CSV_URL)
+      .then((response) => {
+        if (!response.ok) throw new Error('Não foi possível carregar a Google Sheet')
+        return response.text()
+      })
+      .then((text) => {
+        const sheetEvents = parseCSV(text)
+        if (sheetEvents.length > 0) {
+          setRawEvents(sheetEvents)
+          setSheetStatus(`Eventos carregados da Google Sheet: ${sheetEvents.length}`)
+        } else {
+          setSheetStatus('A Google Sheet carregou, mas não foram encontrados eventos publicados. A mostrar eventos de reserva.')
+        }
+      })
+      .catch(() => {
+        setSheetStatus('Não foi possível carregar a Google Sheet. A mostrar eventos de reserva.')
+      })
+  }, [])
+
+  const preparedEvents = useMemo(() => getPreparedEvents(rawEvents), [rawEvents])
   const activeEvents = preparedEvents.filter((event) => !event.isArchived)
   const archivedEvents = preparedEvents.filter((event) => event.isArchived)
   const categories = useMemo(() => [...new Set(preparedEvents.map((event) => event.category))].sort(), [preparedEvents])
@@ -871,6 +975,7 @@ function App() {
       </header>
 
       <main>
+        <div className="container"><p className="small" style={{ marginTop: '1rem' }}>{sheetStatus}</p></div>
         <section className="container hero">
           <div>
             <div className="pill"><CalendarDays size={16} /> Calendário de formação para profissionais de laboratório</div>
