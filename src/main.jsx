@@ -1,7 +1,12 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
+import App from './App.jsx' // Se o Vercel der erro nesta linha por falta do ficheiro, podes apagá-la
 import './index.css'
+
+// ==========================================
+// 🔗 LINK DO FORMULÁRIO DE SUGERIR EVENTO
+// ==========================================
+export const FORM_LINK = "https://docs.google.com/forms/d/e/1FAIpQLSc22SEwuG9LJnLsQ0tgRrJA9zx2Fsr7cZ6iA9g06qRnemOxVw/viewform?usp=header";
 
 // ==========================================
 // 1. EVENTOS ATIVOS (Futuros ou a Decorrer)
@@ -267,7 +272,7 @@ export const events = [
     "price": "Consultar",
     "certificate": "Sim",
     "organizer": "SEMEDLAB",
-    "link": "https://semedlab.es/curso/curso-de-bioestadistica-basica-aplicada-a-las-ciencias-de-la-salud/",
+    "link": "https://semedlab.es/curso/curso-de-bioestadistica-basica-applied-a-las-ciencias-de-la-salud/",
     "region": "Online",
     "description": "Formação em conceitos essenciais de bioestatística aplicada à investigação clínica, análise de dados de saúde e publicações científicas."
   },
@@ -536,64 +541,3 @@ export const archivedEvents = [
     "type": "Webinar online",
     "price": "Gratuito",
     "certificate": "Sim",
-    "organizer": "AACC Europe",
-    "link": "https://www.aacc.org",
-    "region": "Online",
-    "description": "Revisão sobre o papel dos biomarcadores cardíacos na urgência e rotina."
-  },
-  {
-    "title": "Jornadas de Primavera de Doenças Infeciosas",
-    "date": "23-24 Abril 2026",
-    "category": "Microbiologia / Infeção",
-    "type": "Jornadas Presenciais",
-    "price": "Consultar",
-    "certificate": "Sim",
-    "organizer": "SPMI",
-    "link": "https://www.spmi.pt",
-    "region": "Portugal",
-    "description": "Discussão multidisciplinar de patologia infeciosa e diagnóstico microbiológico."
-  },
-  {
-    "title": "Workshop: Validação de Métodos segundo a ISO 15189:2022",
-    "date": "07 Maio 2026",
-    "category": "Qualidade",
-    "type": "Workshop Presencial",
-    "price": "Consultar",
-    "certificate": "Sim",
-    "organizer": "RELACRE",
-    "link": "https://www.relacre.pt",
-    "region": "Lisboa, Portugal",
-    "description": "Sessão prática focada nos requisitos de validação da nova norma ISO 15189."
-  },
-  {
-    "title": "Simpósio Ibero-Americano de Erros Inatos do Metabolismo",
-    "date": "14-15 Maio 2026",
-    "category": "Bioquímica Clínica",
-    "type": "Simpósio Presencial",
-    "price": "Consultar",
-    "certificate": "Sim",
-    "organizer": "Insa",
-    "link": "https://www.insa.min-saude.pt",
-    "region": "Lisboa, Portugal",
-    "description": "Rastreio e novas abordagens diagnósticas em doenças metabólicas raras."
-  },
-  {
-    "title": "Webinar: Automação e Futuro da Microbiologia",
-    "date": "28 Maio 2026",
-    "category": "Microbiologia / Infeção",
-    "type": "Webinar online",
-    "price": "Gratuito",
-    "certificate": "Sim",
-    "organizer": "BD Biosciences",
-    "link": "https://www.bd.com",
-    "region": "Online",
-    "description": "Sessão de esclarecimento sobre urinálise e boas práticas na execução do exame básico de urina, com a palestrante Michelle Lima Garcez."
-  }
-];
-
-// O QUE PRECISAS PARA APLICAÇÃO VOLTAR A LIGAR:
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
