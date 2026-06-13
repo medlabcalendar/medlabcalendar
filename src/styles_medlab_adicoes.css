@@ -1,0 +1,109 @@
+/* Adições para calendário mensal, pesquisa, arquivo e eventos gratuitos */
+.stats-row,
+.calendar-controls,
+.card-actions,
+.filters-panel {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.stats-row span {
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  font-size: 0.9rem;
+}
+
+.calendar-section { padding-top: 4rem; }
+
+.monthly-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.calendar-weekday {
+  font-weight: 700;
+  text-align: center;
+  padding: 0.5rem;
+}
+
+.calendar-day {
+  min-height: 118px;
+  padding: 0.65rem;
+  border: 1px solid rgba(20, 39, 62, 0.12);
+  border-radius: 1rem;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.calendar-day-muted { opacity: 0.42; }
+
+.calendar-event-pill {
+  font-size: 0.76rem;
+  line-height: 1.2;
+  padding: 0.3rem 0.4rem;
+  border-radius: 0.55rem;
+  background: rgba(40, 88, 160, 0.1);
+  text-decoration: none;
+}
+
+.free-calendar-event,
+.free-badge {
+  background: rgba(28, 150, 92, 0.12);
+}
+
+.archived-badge,
+.archived-event {
+  opacity: 0.72;
+}
+
+.filters-panel {
+  padding: 1rem;
+  border-radius: 1rem;
+  background: rgba(20, 39, 62, 0.05);
+  margin-bottom: 1rem;
+}
+
+.search-input {
+  flex: 1 1 320px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid rgba(20, 39, 62, 0.12);
+}
+
+.search-input input,
+.filters-panel select {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font: inherit;
+}
+
+.filters-panel select {
+  width: auto;
+  min-width: 170px;
+  padding: 0.7rem 0.85rem;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid rgba(20, 39, 62, 0.12);
+}
+
+.checkbox-filter {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.free-event {
+  border-color: rgba(28, 150, 92, 0.38);
+}
