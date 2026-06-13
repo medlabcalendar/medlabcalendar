@@ -598,22 +598,16 @@ function parseCSV(text) {
     } else if (char === ',' && !insideQuotes) {
       row.push(value.trim())
       value = ''
-    } else if ((char === '\n' || char === '\r') && !insideQuotes) {
-  if (char === '\r' && nextChar === '\n') i += 1
-  row.push(value.trim())
-  if (row.some((cell) => cell !== '')) rows.push(row)
-  row = []
-  value = ''
-}
-      } else if ((char === '\n' || char === '\r') && !insideQuotes) {
-  if (char === '\r' && nextChar === '\n') i += 1
-  row.push(value.trim())
-  if (row.some((cell) => cell !== '')) rows.push(row)
-  row = []
-  value = ''
-} else {
-  value += char
-}
+    } else if ((char === '
+' || char === '
+') && !insideQuotes) {
+      if (char === '
+' && nextChar === '
+') i += 1
+      row.push(value.trim())
+      if (row.some((cell) => cell !== '')) rows.push(row)
+      row = []
+      value = ''
     } else {
       value += char
     }
