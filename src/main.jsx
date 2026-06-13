@@ -541,12 +541,41 @@ function normalizeText(value = '') {
     .toLowerCase()
 }
 
+const areaCategories = [
+  'Genética',
+  'Inovação',
+  'Hematologia',
+  'Medicina Laboratorial',
+  'Bioquímica Clínica',
+  'Microbiologia',
+  'Qualidade',
+  'Anatomia Patológica',
+  'Biologia Molecular',
+  'Toxicologia',
+  'Bioestatística',
+  'Urgência',
+  'Bioquímica',
+]
+
 function normalizeCategory(category) {
   if (!category) return 'Outros'
   const normalized = normalizeText(category)
 
-  // Todas as variantes de Anatomia ficam agrupadas numa única categoria.
   if (normalized.includes('anatomia')) return 'Anatomia Patológica'
+  if (normalized.includes('biologia molecular')) return 'Biologia Molecular'
+  if (normalized.includes('bioestatistica') || normalized.includes('investigacao')) return 'Bioestatística'
+  if (normalized.includes('bioquimica clinica')) return 'Bioquímica Clínica'
+  if (normalized.includes('bioquimica') && normalized.includes('urgencia')) return 'Urgência'
+  if (normalized.includes('bioquimica')) return 'Bioquímica'
+  if (normalized.includes('genetica') && normalized.includes('inovacao')) return 'Inovação'
+  if (normalized.includes('genetica')) return 'Genética'
+  if (normalized.includes('hematologia') || normalized.includes('hemostase') || normalized.includes('coagulacao')) return 'Hematologia'
+  if (normalized.includes('microbiologia') || normalized.includes('infec')) return 'Microbiologia'
+  if (normalized.includes('qualidade') || normalized.includes('pre-analitica') || normalized.includes('poct') || normalized.includes('urinalise')) return 'Qualidade'
+  if (normalized.includes('toxicologia')) return 'Toxicologia'
+  if (normalized.includes('urgencia')) return 'Urgência'
+  if (normalized.includes('medicina laboratorial')) return 'Medicina Laboratorial'
+  if (normalized.includes('inovacao')) return 'Inovação'
 
   return category
 }
@@ -869,10 +898,11 @@ function FeatureStyles() {
       .category-search-box { display: flex; align-items: center; gap: 0.6rem; max-width: 760px; margin: 1.25rem auto 1.5rem; border: 1px solid #cbd5e1; border-radius: 999px; padding: 0.75rem 1rem; background: #fff; }
       .category-search-box input { width: 100%; border: 0; outline: 0; font: inherit; background: transparent; }
       .category-icon-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1rem; }
-      .category-icon-card { border: 1px solid #e2e8f0; border-radius: 22px; padding: 1.25rem 1rem; background: #fff; cursor: pointer; text-align: center; display: flex; min-height: 150px; flex-direction: column; align-items: center; justify-content: center; gap: 0.45rem; transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease; }
-      .category-icon-card:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(15, 23, 42, 0.10); border-color: #94a3b8; }
-      .category-icon { width: 58px; height: 58px; border-radius: 18px; display: flex; align-items: center; justify-content: center; background: #f8fafc; font-size: 1.8rem; margin-bottom: 0.25rem; }
-      .category-icon-card strong { color: #0f172a; line-height: 1.25; }
+      .category-icon-card { border: 1px solid #e2e8f0; border-radius: 24px; padding: 1.35rem 1rem; background: #fff; cursor: pointer; text-align: center; display: flex; min-height: 170px; flex-direction: column; align-items: center; justify-content: center; gap: 0.55rem; transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease; }
+      .category-icon-card:hover { transform: translateY(-4px); box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12); border-color: #94a3b8; }
+      .category-icon { width: 68px; height: 68px; border-radius: 999px; display: flex; align-items: center; justify-content: center; background: #f8fafc; color: #0f172a; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08); margin-bottom: 0.35rem; }
+      .category-icon svg { width: 30px; height: 30px; stroke-width: 2; }
+      .category-icon-card strong { color: #0f172a; line-height: 1.25; font-size: 1rem; }
       .category-icon-card span:last-child { color: #64748b; font-size: 0.9rem; }
       @media (max-width: 900px) {
         .monthly-calendar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -885,26 +915,19 @@ function FeatureStyles() {
 
 
 const categoryIcons = {
-  'Genética Molecular': Dna,
-  'Microbiologia / Infeção': Microscope,
+  'Genética': Dna,
+  'Inovação': Lightbulb,
   'Hematologia': Droplets,
-  'Qualidade': ShieldCheck,
-  'Medicina Laboratorial': FlaskConical,
-  'Autoimunidade': ShieldCheck,
-  'Coagulação e Hemostase': Droplets,
-  'Anatomia Patológica': Search,
+  'Medicina Laboratorial': Microscope,
   'Bioquímica Clínica': TestTube2,
-  'Neurologia / Bioquímica': TestTube2,
-  'Qualidade / Urinálise': ShieldCheck,
-  'Hematologia / Qualidade': Droplets,
-  'Hematologia / Oncologia': Droplets,
-  'Bioquímica / Urgência': Ambulance,
+  'Microbiologia': Microscope,
+  'Qualidade': ShieldCheck,
+  'Anatomia Patológica': Search,
   'Biologia Molecular': Dna,
-  'Qualidade / Pré-analítica': ShieldCheck,
-  'Investigação / Bioestatística': BarChart3,
-  'Qualidade / POCT': ShieldCheck,
-  'Bioquímica Clínica / Nefrologia': TestTube2,
-  'Genética / Inovação': Lightbulb
+  'Toxicologia': FlaskConical,
+  'Bioestatística': BarChart3,
+  'Urgência': Ambulance,
+  'Bioquímica': TestTube2,
 }
 
 function getCategoryIcon(category) {
@@ -938,7 +961,7 @@ function App() {
   const preparedEvents = useMemo(() => getPreparedEvents(rawEvents), [rawEvents])
   const activeEvents = preparedEvents.filter((event) => !event.isArchived)
   const archivedEvents = preparedEvents.filter((event) => event.isArchived)
-  const categories = useMemo(() => [...new Set(preparedEvents.map((event) => event.category))].sort(), [preparedEvents])
+  const categories = useMemo(() => areaCategories, [])
   const [query, setQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('Todas')
   const [formatFilter, setFormatFilter] = useState('Todos')
@@ -1095,14 +1118,14 @@ function App() {
           <div className="category-icon-grid">
             {visibleCategories.map((category) => {
               const matchingEvents = activeEvents.filter((event) => event.category === category)
+              const Icon = getCategoryIcon(category)
               return (
                 <button type="button" className="category-icon-card" key={category} onClick={() => openCategory(category)}>
                   <span className="category-icon" aria-hidden="true">
-  {(() => {
-    const Icon = getCategoryIcon(category)
-    return <Icon size={32} />
-  })()}
-</span>
+                    <Icon size={30} />
+                  </span>
+                  <strong>{category}</strong>
+                  <span>{matchingEvents.length} evento(s)</span>
                 </button>
               )
             })}
