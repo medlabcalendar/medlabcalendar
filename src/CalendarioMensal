@@ -1,0 +1,130 @@
+import React, { useState } from 'react';
+import { events } from './main.jsx'; // Garante que o caminho para o main.jsx está correto
+
+export default function CalendarioMensal() {
+  // 1. Função para tentar adivinhar o mês/ano com base na string "date" do teu JSON
+  const obterMesAno = (dateStr) => {
+    const meses = [
+      'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    ];
+    
+    // Procura por qualquer menção a um mês na string da data
+    const mesEncontrado = meses.find(mes => 
+      dateStr.toLowerCase().includes(mes.toLowerCase())
+    );
+    
+    // Procura pelo ano (ex: 2026 ou 2027)
+    const anoEncontrado = dateStr.match(/202[6-7]/);
+    const ano = anoEncontrado ? anoEncontrado[0] : '2026';
+
+    if (mesEncontrado) {
+      return `${mesEncontrado} ${ano}`;
+    }
+    return `Outros / Contínuos ${ano}`;
+  };
+
+  // 2. Agrupar os eventos por Mês/Ano
+  const eventosAgrupados = events.reduce((acc, evento) => {
+    const chaveMesAno = obterMesAno(evento.date);
+    if (!acc[chaveMesAno]) {
+      acc[chaveMesAno] = [];
+    }
+    acc[chaveMesAno].push(evento);
+    return acc;
+  }, {});
+
+  // Obter a lista de meses que têm eventos para o menu de navegação
+  const mesesDisponiveis = Object.keys(eventosAgrupados).sort((a, b) => {
+    // Ordenação básica (coloca "Outros" no fim se necessário)
+    if (a.includes('Outros')) return 1;
+    if (b.includes('Outros')) return -1;
+    return 0; 
+  });
+
+  // Estado para controlar qual o mês visível no calendário (começa no primeiro disponível)
+  const [mesSelecionado, setMesSelecionado] = useState(mesesDisponiveis[0] || '');
+
+  if (mesesDisponiveis.length === 0) {
+    return <p className="text-center p-4">Não existem eventos futuros agendados.</p>;
+  }
+
+  return (
+    <div className="max-w-4xl mx-auto p-4 font-sans">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+        📅 Calendário Mensal de Eventos
+      </h2>
+
+      {/* 🧭 Menu de Navegação dos Meses */}
+      <div className="flex flex-wrap gap-2 justify-center mb-8 border-b pb-4">
+        {mesesDisponiveis.map((mesAno) => (
+          <button
+            key={mesAno}
+            onClick={() => setMesSelecionado(mesAno)}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              mesSelecionado === mesAno
+                ? 'bg-blue-600 text-white shadow'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            {mesAno}
+          </button>
+        ))}
+      </div>
+
+      {/* 📋 Lista de Eventos do Mês Selecionado */}
+      <div className="space-y-4">
+        <h3 className="text-xl font-semibold text-blue-700 mb-4">
+          Eventos em {mesSelecionado} ({eventosAgrupados[mesSelecionado]?.length || 0})
+        </h3>
+        
+        {eventosAgrupados[mesSelecionado]?.map((evento, index) => (
+          <div 
+            key={index} 
+            className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow"
+          >
+            <div className="flex flex-wrap items-start justify-between gap-2 mb-2">
+              <span className="bg-blue-50 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded">
+                {evento.category}
+              </span>
+              <span className="text-sm font-semibold text-amber-600 bg-amber-50 px-2.5 py-1 rounded">
+                {evento.type}
+              </span>
+            </div>
+
+            <h4 className="text-lg font-bold text-gray-900 mb-1">
+              {evento.title}
+            </h4>
+            
+            <p className="text-sm text-gray-600 font-medium mb-2">
+              📍 {evento.region} | 🗓️ {evento.date}
+            </p>
+            
+            <p className="text-sm text-gray-700 mb-4 bg-gray-50 p-3 rounded-lg">
+              {evento.description}
+            </p>
+
+            <div className="flex flex-wrap items-center justify-between text-xs text-gray-500 pt-3 border-t gap-2">
+              <div>
+                <span className="font-semibold text-gray-700">Organização:</span> {evento.organizer}
+              </div>
+              <div className="flex gap-4">
+                <span>💰 {evento.price}</span>
+                {evento.link && evento.link.startsWith('http') && (
+                  <a 
+                    href={evento.link} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-600 font-bold hover:underline"
+                  >
+                    Ver Info ↗
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
