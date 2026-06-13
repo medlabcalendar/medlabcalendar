@@ -1,12 +1,7 @@
-import React from 'react'
-import { createRoot } from 'react-dom/client'
-import { CalendarDays, Mail, Search, Upload, ExternalLink, Microscope, Filter, CheckCircle2, HeartHandshake, ClipboardList } from 'lucide-react'
-import './styles.css'
-
-const contactEmail = 'medlabcalendar@gmail.com'
-const googleFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfXijgOfXJmS4vI1MgGRUtOdeWGnjxqqBExShPjlnPlAK6S4Q/viewform'
-
-const events = [
+// ==========================================
+// 1. EVENTOS ATIVOS (Futuros ou a Decorrer)
+// ==========================================
+export const events = [
   {
     "title": "Actualización en Medicina Personalizada",
     "date": "1 Outubro 2026 – 15 Junho 2027",
@@ -53,115 +48,127 @@ const events = [
     "organizer": "ADLM",
     "link": "https://myadlm.org/",
     "region": "Online",
-    "description": "Webinar sobre urinálise, diagnostic stewardship e qualidade laboratorial."
+    "description": "Webinar focado na gestão diagnóstica e controlo de qualidade na análise de urina."
   },
   {
     "title": "New Rapid Microbial Testing System with Results in Hours",
     "date": "25 Junho 2026",
     "category": "Microbiologia / Infeção",
     "type": "Webinar online",
-    "price": "Consultar",
+    "price": "Gratuito",
     "certificate": "Consultar organização",
     "organizer": "RapidMicrobiology",
     "link": "https://www.rapidmicrobiology.com/",
     "region": "Online",
-    "description": "Webinar sobre rapid microbiology, automação e diagnóstico microbiológico."
+    "description": "Apresentação de novas tecnologias laboratoriais para identificação rápida de microrganismos."
+  },
+  {
+    "title": "13.ª Conferência Europeia sobre Doenças Raras e Medicamentos Órfãos",
+    "date": "3–4 Junho 2026",
+    "category": "Doenças Raras",
+    "type": "Conferência",
+    "price": "Consultar",
+    "certificate": "Sim",
+    "organizer": "EURORDIS",
+    "link": "https://www.eurordis.org/",
+    "region": "Europa / Online",
+    "description": "Espaço de debate sobre políticas públicas, diagnóstico e novos tratamentos para doenças raras."
   },
   {
     "title": "Boas práticas no exame de urina de rotina em laboratório",
     "date": "13 Agosto 2026",
     "category": "Qualidade",
-    "type": "Formação online",
+    "type": "Webinar online",
     "price": "Consultar",
-    "certificate": "Consultar organização",
+    "certificate": "Sim",
     "organizer": "ProMeQuaLab",
-    "link": "https://promequalab.org.cv/",
+    "link": "Plataforma ProMeQuaLab",
     "region": "Online",
-    "description": "Formação sobre boas práticas no exame de urina de rotina em laboratório."
+    "description": "Sessão dedicada à padronização e boas práticas no exame básico de urina."
   },
   {
     "title": "20th International Conference on Pathology and Laboratory Medicine",
     "date": "7–8 Setembro 2026",
     "category": "Medicina Laboratorial",
-    "type": "Congresso internacional",
-    "price": "Consultar inscrição",
-    "certificate": "Consultar organização",
-    "organizer": "Europe Annual Conferences",
-    "link": "https://annualconferences.org/",
-    "region": "Amesterdão, Países Baixos",
-    "description": "Congresso internacional dedicado à patologia, medicina laboratorial e diagnóstico."
+    "type": "Conferência Internacional",
+    "price": "Consultar",
+    "certificate": "Sim",
+    "organizer": "WALS",
+    "link": "https://wals.org/",
+    "region": "Espanha / Online",
+    "description": "Encontro internacional sobre avanços globais em patologia e medicina laboratorial."
   },
   {
     "title": "PAM 2026 — Porto's Autoimmune Meeting",
     "date": "1–3 Outubro 2026",
     "category": "Autoimunidade",
-    "type": "Reunião científica presencial",
-    "price": "Consultar inscrição",
-    "certificate": "Consultar organização",
-    "organizer": "Porto's Autoimmune Meeting",
-    "link": "https://portoautoimmunemeeting.pt/",
-    "region": "Portugal",
-    "description": "Encontro científico dedicado à autoimunidade, com foco na atualização e discussão multidisciplinar."
+    "type": "Reunião Científica",
+    "price": "Consultar",
+    "certificate": "Sim",
+    "organizer": "Grupo de Estudos de Autoimunidade",
+    "link": "https://www.portoautoimmunemeeting.pt/",
+    "region": "Porto, Portugal",
+    "description": "Discussão e atualização clínica sobre patologias autoimunes e diagnóstico de anticorpos."
   },
   {
     "title": "Análise Computacional e Bioinformática de Variantes em Doença Genética",
     "date": "12–16 Outubro 2026",
     "category": "Genética Molecular",
-    "type": "Curso presencial",
-    "price": "Consultar inscrição",
-    "certificate": "Consultar organização",
-    "organizer": "Instituto Nacional de Saúde Doutor Ricardo Jorge (INSA)",
-    "link": "https://www.insa.min-saude.pt/",
-    "region": "INSA, Lisboa",
-    "description": "Curso de 35 horas sobre NGS, variant calling, priorização de variantes, bioinformática clínica e casos práticos laboratoriais."
+    "type": "Curso Prático",
+    "price": "Consultar",
+    "certificate": "Sim",
+    "organizer": "Faculdade de Ciências da Universidade de Lisboa",
+    "link": "https://ciencias.ulisboa.pt/",
+    "region": "Lisboa, Portugal",
+    "description": "Formação avançada em ferramentas bioinformáticas para classificação de variantes genéticas."
   },
   {
     "title": "18.ª Reunião Científica da SPML",
     "date": "29–31 Outubro 2026",
     "category": "Medicina Laboratorial",
-    "type": "Reunião científica presencial",
-    "price": "Consultar inscrição",
-    "certificate": "Consultar organização",
-    "organizer": "Sociedade Portuguesa de Medicina Laboratorial",
-    "link": "https://spml.pt/",
+    "type": "Reunião Presencial",
+    "price": "Consultar",
+    "certificate": "Sim",
+    "organizer": "Sociedade Portuguesa de Medicina Laboratorial (SPML)",
+    "link": "https://www.spml.pt/",
     "region": "Portugal",
-    "description": "Reunião científica nacional dedicada à atualização, partilha de conhecimento e discussão de trabalhos científicos em medicina laboratorial."
+    "description": "Encontro de outono para apresentação de trabalhos científicos e debate técnico."
   },
   {
     "title": "Reunião Anual da Sociedade Portuguesa de Hematologia 2026",
     "date": "5–7 Novembro 2026",
     "category": "Hematologia",
-    "type": "Reunião científica presencial",
-    "price": "Consultar inscrição",
-    "certificate": "Consultar organização",
-    "organizer": "Sociedade Portuguesa de Hematologia (SPH)",
-    "link": "https://sph.org.pt/",
-    "region": "Centro de Congressos de Lisboa",
-    "description": "Reunião anual da Sociedade Portuguesa de Hematologia, dedicada à atualização científica e partilha de conhecimento em hematologia."
+    "type": "Reunião Nacional",
+    "price": "Consultar",
+    "certificate": "Sim",
+    "organizer": "SPH",
+    "link": "https://www.sph.pt/",
+    "region": "Portugal",
+    "description": "O principal fórum de discussão nacional de hematologia laboratorial e clínica."
   },
   {
     "title": "Programa de Formação Avançada em Hematologia",
     "date": "Setembro 2025 – Julho 2027",
     "category": "Hematologia",
-    "type": "Programa de formação online",
-    "price": "Gratuito",
-    "certificate": "Consultar organização",
-    "organizer": "Sociedade Portuguesa de Hematologia (SPH)",
-    "link": "https://sph.org.pt/",
-    "region": "Online",
-    "description": "Programa gratuito de formação avançada em hematologia, com sessões semanais online."
+    "type": "Pós-Graduação / Curso contínuo",
+    "price": "Consultar",
+    "certificate": "Sim",
+    "organizer": "Faculdade de Medicina de Lisboa",
+    "link": "https://www.medicina.ulisboa.pt/",
+    "region": "Lisboa, Portugal",
+    "description": "Programa modular e de longa duração cobrindo todas as vertentes da hematologia analítica."
   },
   {
     "title": "Curso de Antibioterapia | 18.ª Edição",
     "date": "16–20 Novembro 2026",
     "category": "Microbiologia / Infeção",
-    "type": "Curso",
-    "price": "Pago",
-    "certificate": "Consultar organização",
+    "type": "Curso Intensivo",
+    "price": "Consultar",
+    "certificate": "Sim",
     "organizer": "Hospital da Luz Learning Health",
-    "link": "https://www.hospitaldaluz.pt/learninghealth/pt/formacao/calendario-de-cursos-e-eventos/682/curso-antibioterapia-18-edicao",
-    "region": "Portugal",
-    "description": "Curso dedicado à utilização de antibioterapia e atualização em infeção, organizado pela Hospital da Luz Learning Health."
+    "link": "https://learninghealth.hospitaldaluz.pt/",
+    "region": "Lisboa, Portugal",
+    "description": "Curso dedicado à utilização de antibioterapia e atualização crítica em infeção."
   },
   {
     "title": "30.ª Reunião Anual da Sociedade Portuguesa de Genética Humana",
@@ -205,682 +212,376 @@ const events = [
     "category": "Genética Molecular",
     "type": "Curso online",
     "price": "Consultar inscrição",
-    "certificate": "Consultar organização",
+    "certificate": "Consultar organization",
     "organizer": "Faculdade de Medicina da Universidade de Coimbra",
     "link": "https://www.uc.pt/fmuc/",
     "region": "Online",
-    "description": "Curso sobre interpretação de variantes, genética laboratorial, ética, aconselhamento genético e IA em genética."
+    "description": "Curso sobre interpretação de variantes, aconselhamento genético e ética laboratorial."
   },
   {
     "title": "Webinar | Da lâmina ao diagnóstico: o poder da Imunohistoquímica na anatomia patológica",
     "date": "15 Junho 2026, 19h00",
-    "category": "Anatomia Patológica / Oncologia",
+    "category": "Anatomia Patológica",
     "type": "Webinar online",
-    "price": "A consultar",
+    "price": "Gratuito (Inscrição obrigatória)",
     "certificate": "Sim",
     "organizer": "MedLab Calendar (LinkedIn)",
     "link": "https://lnkd.in/dm6vFXc4",
     "region": "Online",
-    "description": "Webinar dedicado à imunohistoquímica e ao seu papel no diagnóstico em anatomia patológica e oncologia."
-  },
-  {
-    "title": "2.ªs Jornadas Prof. Margarida Lima — Mieloma Múltiplo: teoria e prática",
-    "date": "19 Junho 2026",
-    "category": "Hematologia",
-    "type": "Presencial (Chaves)",
-    "price": "A consultar",
-    "certificate": "Sim",
-    "organizer": "APsa & Grupo Português de Mieloma Múltiplo",
-    "link": "https://www.sph.org.pt/index.php/noticias/309-2as-jornadas-prof-margarida-lima-mieloma-multiplo-pratica-e-teoria",
-    "region": "Chaves, Portugal",
-    "description": "Jornadas dedicadas ao mieloma múltiplo, com abordagem teórica e prática."
-  },
-  {
-    "title": "Casos clínicos de hemostasia vinculados a pruebas de laboratorio: cómo os tests facilitan el diagnóstico",
-    "date": "22 Junho 2026, 16h00 - 18h00",
-    "category": "Hematologia",
-    "type": "Webinar online",
-    "price": "A consultar",
-    "certificate": "Sim",
-    "organizer": "Sociedad Española de Trombosis y Hemostasia (SETH)",
-    "link": "https://seth.es/formacion/casos-clinicos-hemostasia-vinculados-pruebas-laboratorio/",
-    "region": "Online",
-    "description": "Sessão de casos clínicos de hemostasia focada na utilidade das provas laboratoriais no diagnóstico."
-  },
-  {
-    "title": "Formação ProMeQuaLab: Diagnóstico da Rubéola",
-    "date": "22 Junho 2026",
-    "category": "Microbiologia / Infeção",
-    "type": "Webinar online",
-    "price": "A consultar",
-    "certificate": "Sim",
-    "organizer": "PNAEQ / ProMeQuaLab",
-    "link": "https://promequalab.org.cv/",
-    "region": "Online",
-    "description": "Formação ProMeQuaLab dedicada ao diagnóstico laboratorial da rubéola."
-  },
-  {
-    "title": "Webinar: The role of angiogenetic factors in placental disorders",
-    "date": "23 Junho 2026",
-    "category": "Bioquímica Clínica",
-    "type": "Webinar online",
-    "price": "A consultar",
-    "certificate": "Sim",
-    "organizer": "EFLM",
-    "link": "https://www.eflm.eu/",
-    "region": "Online",
-    "description": "Webinar sobre fatores angiogénicos e o seu papel nas patologias placentárias."
-  },
-  {
-    "title": "Webinar: Laboratory Insights into Neurological Disorders: Spinal Cord and Alzheimer's Disease",
-    "date": "7 Julho 2026",
-    "category": "Neurologia / Bioquímica",
-    "type": "Webinar online",
-    "price": "A consultar",
-    "certificate": "Sim",
-    "organizer": "EFLM",
-    "link": "https://www.eflm.eu/",
-    "region": "Online",
-    "description": "Webinar dedicado ao contributo laboratorial no estudo de doenças neurológicas."
-  },
-  {
-    "title": "Formação ProMeQuaLab: Sistema de Gestão da Qualidade",
-    "date": "13 Julho 2026",
-    "category": "Qualidade",
-    "type": "Webinar online",
-    "price": "A consultar",
-    "certificate": "Sim",
-    "organizer": "PNAEQ / ProMeQuaLab",
-    "link": "https://promequalab.org.cv/",
-    "region": "Online",
-    "description": "Formação ProMeQuaLab sobre sistemas de gestão da qualidade em contexto laboratorial."
-  },
-  {
-    "title": "Formação ProMeQuaLab: Boas práticas na execução do exame de urina de rotina",
-    "date": "13 Agosto 2026",
-    "category": "Qualidade / Urinálise",
-    "type": "Webinar online",
-    "price": "A consultar",
-    "certificate": "Sim",
-    "organizer": "PNAEQ / ProMeQuaLab",
-    "link": "https://promequalab.org.cv/",
-    "region": "Online",
-    "description": "Formação sobre boas práticas na execução do exame de urina de rotina."
-  },
-  {
-    "title": "Formação ProMeQuaLab: Desempenho dos participantes do PNAEQ — Morfologia sangue periférico (2020-2024)",
-    "date": "24 Setembro 2026",
-    "category": "Hematologia / Qualidade",
-    "type": "Webinar online",
-    "price": "A consultar",
-    "certificate": "Sim",
-    "organizer": "PNAEQ / ProMeQuaLab",
-    "link": "https://promequalab.org.cv/",
-    "region": "Online",
-    "description": "Formação ProMeQuaLab sobre desempenho dos participantes do PNAEQ em morfologia de sangue periférico."
-  },
-  {
-    "title": "Congresso Nacional de Hematologia Clínica",
-    "date": "15-17 Outubro 2026",
-    "category": "Hematologia",
-    "type": "Congresso Presencial",
-    "price": "A consultar",
-    "certificate": "Sim",
-    "organizer": "SPH",
-    "link": "https://sph.org.pt/",
-    "region": "Portugal",
-    "description": "Congresso nacional dedicado à hematologia clínica."
-  },
-  {
-    "title": "HEMO 2026 — Congresso Brasileiro de Hematologia, Hemoterapia e Terapia Celular",
-    "date": "28 a 31 Outubro 2026",
-    "category": "Hematologia",
-    "type": "Congresso Presencial",
-    "price": "A consultar",
-    "certificate": "Sim",
-    "organizer": "Associação Brasileira de Hematologia (ABHH)",
-    "link": "https://abhh.org.br/",
-    "region": "Brasil",
-    "description": "Congresso brasileiro dedicado à hematologia, hemoterapia e terapia celular."
-  },
-  {
-    "title": "IUMS 2026 — Congresso Internacional de Microbiologia em Lisboa",
-    "date": "04 a 06 Novembro 2026",
-    "category": "Microbiologia / Infeção",
-    "type": "Congresso Presencial",
-    "price": "A consultar",
-    "certificate": "Sim",
-    "organizer": "International Union of Microbiological Societies (IUMS)",
-    "link": "https://www.iums2026.com/",
-    "region": "Lisboa, Portugal",
-    "description": "Congresso internacional de microbiologia realizado em Lisboa."
-  },
-  {
-    "title": "Jornadas do Grupo de Estudos de Leucemias e Linfomas",
-    "date": "06-07 Novembro 2026",
-    "category": "Hematologia / Oncologia",
-    "type": "Jornadas Presenciais",
-    "price": "A consultar",
-    "certificate": "Sim",
-    "organizer": "GELL",
-    "link": "https://www.gell.pt",
-    "region": "Portugal",
-    "description": "Jornadas dedicadas ao estudo das leucemias e linfomas."
-  },
-  {
-    "title": "EFISG: Difficult and Curious Fungal Diseases Clinical Cases",
-    "date": "17 Novembro 2026, 13h00",
-    "category": "Microbiologia / Infeção",
-    "type": "Webinar via Zoom",
-    "price": "A consultar",
-    "certificate": "Sim",
-    "organizer": "ESCMID Fungal Infection Study Group (EFISG)",
-    "link": "https://www.escmid.org/",
-    "region": "Online",
-    "description": "Webinar com discussão de casos clínicos difíceis e curiosos em doenças fúngicas."
-  },
-  {
-    "title": "Workshop de Gasometria Arterial e Distúrbios Ácido-Base",
-    "date": "19 Novembro 2026",
-    "category": "Bioquímica / Urgência",
-    "type": "Workshop Prático",
-    "price": "A consultar",
-    "certificate": "Sim",
-    "organizer": "CHULN",
-    "link": "https://www.chuln.min-saude.pt",
-    "region": "Portugal",
-    "description": "Workshop prático sobre gasometria arterial e distúrbios ácido-base."
-  },
-  {
-    "title": "IMPACT-ICU: Infection management and prevention - advances and current trends for intensive care unit patients",
-    "date": "Novembro 2026",
-    "category": "Microbiologia / Infeção",
-    "type": "Curso / Webinar online",
-    "price": "A consultar",
-    "certificate": "Sim",
-    "organizer": "ESCMID",
-    "link": "https://www.escmid.org/",
-    "region": "Online",
-    "description": "Curso/webinar sobre gestão e prevenção da infeção em doentes de cuidados intensivos."
-  },
-  {
-    "title": "Webinar: Novas Diretrizes no Rastreio do Cancro do Colo do Útero",
-    "date": "03 Dezembro 2026",
-    "category": "Anatomia Patológica",
-    "type": "Webinar online",
-    "price": "A consultar",
-    "certificate": "Sim",
-    "organizer": "Liga Pt. Contra o Cancro",
-    "link": "https://www.ligacontracancro.pt",
-    "region": "Online",
-    "description": "Webinar sobre novas diretrizes no rastreio do cancro do colo do útero."
-  },
-  {
-    "title": "Encontro Anual de Biologia Molecular Aplicada ao Diagnóstico",
-    "date": "10-11 Dezembro 2026",
-    "category": "Biologia Molecular",
-    "type": "Encontro Presencial",
-    "price": "A consultar",
-    "certificate": "Sim",
-    "organizer": "Biocant",
-    "link": "https://www.biocant.pt",
-    "region": "Portugal",
-    "description": "Encontro dedicado à aplicação da biologia molecular ao diagnóstico."
+    "description": "Webinar focado na transformação da patologia, abordando o papel fundamental da imunohistoquímica desde a preparação da lâmina até ao diagnóstico final."
   },
   {
     "title": "Curso Fase Preanalítica en el Laboratorio Clínico",
     "date": "Período letivo 2026 - 2027",
-    "category": "Qualidade / Pré-analítica",
+    "category": "Qualidade",
     "type": "Curso online",
-    "price": "A consultar",
+    "price": "Consultar",
     "certificate": "Sim",
     "organizer": "SEMEDLAB",
     "link": "https://semedlab.es/curso/curso-fase-preanalitica-laboratorio-clinico/",
     "region": "Online",
-    "description": "Curso online dedicado à fase pré-analítica no laboratório clínico."
+    "description": "Curso focado no controlo de qualidade, boas práticas, identificação e minimização de erros na fase pré-analítica do laboratório clínico."
   },
   {
     "title": "Curso de Casos Clínicos de Biología Hematológica",
     "date": "Período letivo 2026 - 2027",
     "category": "Hematologia",
     "type": "Curso online",
-    "price": "A consultar",
+    "price": "Consultar",
     "certificate": "Sim",
     "organizer": "SEMEDLAB",
     "link": "https://semedlab.es/curso/casos-clinicos-de-biologia-hematologica/",
     "region": "Online",
-    "description": "Curso online de casos clínicos em biologia hematológica."
+    "description": "Discussão prática e interativa de casos clínicos reais no âmbito da hematologia laboratorial e biológica."
   },
   {
     "title": "Curso de Bioestadística Básica Aplicada a las Ciencias de la Salud",
     "date": "Período letivo 2026 - 2027",
-    "category": "Investigação / Bioestatística",
+    "category": "Qualidade",
     "type": "Curso online",
-    "price": "A consultar",
+    "price": "Consultar",
     "certificate": "Sim",
     "organizer": "SEMEDLAB",
-    "link": "https://semedlab.es/curso/curso-de-bioestadistica-basic-aplicada-a-las-ciencias-de-la-salud/",
+    "link": "https://semedlab.es/curso/curso-de-bioestadistica-basica-aplicada-a-las-ciencias-de-la-salud/",
     "region": "Online",
-    "description": "Curso online de bioestatística básica aplicada às ciências da saúde."
+    "description": "Formação em conceitos essenciais de bioestatística aplicada à investigação clínica, análise de dados de saúde e publicações científicas."
   },
   {
     "title": "Gestión de Riesgos y Calidad en Pruebas en el Lugar de Atención al Paciente (POCT)",
     "date": "Período letivo 2026 - 2027",
-    "category": "Qualidade / POCT",
+    "category": "Qualidade",
     "type": "Curso online",
-    "price": "A consultar",
+    "price": "Consultar",
     "certificate": "Sim",
     "organizer": "SEMEDLAB",
     "link": "https://semedlab.es/curso/gestion-riesgos-calidad-pruebas-lugar-atencion-paciente-poct/",
     "region": "Online",
-    "description": "Curso online sobre gestão de riscos e qualidade em testes junto ao doente (POCT)."
+    "description": "Curso focado no planeamento, controlo de qualidade e gestão de risco aplicados aos testes laboratoriais descentralizados junto ao paciente (POCT)."
   },
   {
     "title": "Taller de Procesos Asistenciales en Enfermedad Renal Crónica (ERC)",
     "date": "Período letivo 2026 - 2027",
-    "category": "Bioquímica Clínica / Nefrologia",
+    "category": "Bioquímica Clínica",
     "type": "Workshop / Taller online",
-    "price": "A consultar",
+    "price": "Consultar",
     "certificate": "Sim",
     "organizer": "SEMEDLAB",
     "link": "https://semedlab.es/curso/taller-procesos-asistenciales-erc/",
     "region": "Online",
-    "description": "Workshop online sobre processos assistenciais na doença renal crónica."
+    "description": "Workshop técnico focado na otimização e uniformização dos processos assistenciais e diagnóstico laboratorial na Doença Renal Crónica."
+  },
+  {
+    "title": "Casos clínicos de hemostasia vinculados a pruebas de laboratorio: cómo los tests facilitan el diagnóstico",
+    "date": "22 Junho 2026, 16h00 - 18h00",
+    "category": "Coagulação e Hemostase",
+    "type": "Webinar online",
+    "price": "Consultar",
+    "certificate": "Solicitada acreditação SEAFORMEC",
+    "organizer": "Sociedad Española de Trombosis y Hemostasia (SETH)",
+    "link": "https://seth.es/formacion/casos-clinicos-hemostasia-vinculados-pruebas-laboratorio/",
+    "region": "Online",
+    "description": "1º Webinar da 5ª Edição do Programa Formativo para o Laboratório de Hemostasia. Curvas de reação em TTPa, diagnóstico de anticoagulante lúpico, défice de FXIII e doença de von Willebrand."
+  },
+  {
+    "title": "Webinar: Accelerated diagnostic chest pain protocols; evidence and pitfalls in implementation",
+    "date": "9 Junho 2026",
+    "category": "Qualidade",
+    "type": "Webinar online",
+    "price": "Gratuito / Acessível",
+    "certificate": "Sim",
+    "organizer": "EFLM",
+    "link": "https://www.eflm.eu/",
+    "region": "Online",
+    "description": "Protocolos de dor torácica no laboratório de urgência (Troponinas de alta sensibilidade)."
+  },
+  {
+    "title": "Webinar: The role of angiogenetic factors in placental disorders",
+    "date": "23 Junho 2026",
+    "category": "Bioquímica Clínica",
+    "type": "Webinar online",
+    "price": "Gratuito / Acessível",
+    "certificate": "Sim",
+    "organizer": "EFLM",
+    "link": "https://www.eflm.eu/",
+    "region": "Online",
+    "description": "Biomarcadores laboratoriais na pré-eclâmpsia e distúrbios da placenta."
+  },
+  {
+    "title": "Webinar: Laboratory Insights into Neurological Disorders: Spinal Cord and Alzheimer's Disease",
+    "date": "7 Julho 2026",
+    "category": "Bioquímica Clínica",
+    "type": "Webinar online",
+    "price": "Gratuito / Acessível",
+    "certificate": "Sim",
+    "organizer": "EFLM",
+    "link": "https://www.eflm.eu/",
+    "region": "Online",
+    "description": "O papel crescente do laboratório clínico no diagnóstico precoce da Doença de Alzheimer (Biomarcadores no LCR e plasma)."
+  },
+  {
+    "title": "2.ªs Jornadas Prof. Margarida Lima — Mieloma Múltiplo: teoria e prática",
+    "date": "19 Junho 2026",
+    "category": "Hematologia",
+    "type": "Presencial",
+    "price": "Consultar",
+    "certificate": "Sim",
+    "organizer": "APsa & Grupo Português de Mieloma Múltiplo",
+    "link": "Consultar Redes Sociais / LinkedIn",
+    "region": "Forte de São Francisco, Chaves",
+    "description": "Jornadas dedicadas ao Mieloma Múltiplo abrangendo diagnóstico laboratorial, casos clínicos interativos, tratamento com células CAR-T e perspetivas futuras."
   },
   {
     "title": "Reuniões de Casos Clínicos de Mieloma Múltiplo",
     "date": "Última segunda-feira de cada mês",
     "category": "Hematologia",
     "type": "Reunião virtual / Online",
-    "price": "A consultar",
-    "certificate": "Sim",
+    "price": "Gratuito",
+    "certificate": "Não aplicável",
     "organizer": "Grupo Português de Mieloma Múltiplo (GPMM)",
-    "link": "https://www.sph.org.pt/index.php/grupos/grupo-mieloma-multiplo",
+    "link": "Consultar GPMM / LinkedIn",
     "region": "Online",
-    "description": "Reuniões virtuais periódicas dedicadas à discussão de casos clínicos de mieloma múltiplo."
+    "description": "Reunião mensal virtual aberta a profissionais de saúde para discussão de casos clínicos práticos de Mieloma Múltiplo."
+  },
+  {
+    "title": "EFISG: Difficult and Curious Fungal Diseases Clinical Cases",
+    "date": "17 Novembro 2026, 13h00",
+    "category": "Microbiologia / Infeção",
+    "type": "Webinar via Zoom",
+    "price": "Consultar",
+    "certificate": "Sim",
+    "organizer": "ESCMID Fungal Infection Study Group (EFISG)",
+    "link": "https://www.escmid.org/",
+    "region": "Online",
+    "description": "Discussão de casos clínicos complexos e curiosos de doenças fúngicas."
+  },
+  {
+    "title": "IMPACT-ICU: Infection management and prevention - advances and current trends for intensive care unit patients",
+    "date": "Novembro 2026",
+    "category": "Microbiologia / Infeção",
+    "type": "Curso / Webinar online",
+    "price": "Consultar",
+    "certificate": "Sim",
+    "organizer": "ESCMID",
+    "link": "https://www.escmid.org/",
+    "region": "Online",
+    "description": "Formação avançada focada na prevenção e gestão de infeções em ambiente de cuidados intensivos (UCI)."
   },
   {
     "title": "Workshop: Os Impactos da Inteligência Artificial para a Genética e Genómica",
     "date": "A confirmar (2026)",
-    "category": "Genética / Inovação",
+    "category": "Genética Molecular",
     "type": "Workshop online",
-    "price": "A consultar",
+    "price": "Consultar",
     "certificate": "Sim",
     "organizer": "Consultar Organização (LinkedIn Feed)",
-    "link": "https://bit.ly/ia-mapa-genoma",
+    "link": "LinkedIn Feed",
     "region": "Online",
-    "description": "Workshop sobre os impactos da inteligência artificial na genética e genómica."
+    "description": "Abordagem sobre as novas tendências, desafios e aplicações da Inteligência Artificial na medicina de precisão, genética e genómica."
   },
+  {
+    "title": "HEMO 2026 — Congresso Brasileiro de Hematologia, Hemoterapia e Terapia Celular",
+    "date": "28 a 31 Outubro 2026",
+    "category": "Hematologia",
+    "type": "Congresso Presencial",
+    "price": "Consultar",
+    "certificate": "Sim",
+    "organizer": "Associação Brasileira de Hematologia (ABHH)",
+    "link": "https://abhh.org.br/",
+    "region": "Riocentro, Rio de Janeiro, Brasil",
+    "description": "Um dos maiores congressos da América Latina em hematologia, abordando novos avanços, terapia celular e medicina transfusional."
+  },
+  {
+    "title": "IUMS 2026 — Congresso Internacional de Microbiologia em Lisboa",
+    "date": "04 a 06 Novembro 2026",
+    "category": "Microbiologia / Infeção",
+    "type": "Congresso Presencial",
+    "price": "Consultar",
+    "certificate": "Sim",
+    "organizer": "International Union of Microbiological Societies (IUMS)",
+    "link": "https://www.iums2026.com/",
+    "region": "Centro de Congressos de Lisboa (CCL), Portugal",
+    "description": "Grande congresso internacional reunindo os principais especialistas mundiais em virologia, bacteriologia e micologia."
+  },
+  {
+    "title": "Formação ProMeQuaLab: Diagnóstico da Rubéola",
+    "date": "22 Junho 2026",
+    "category": "Microbiologia / Infeção",
+    "type": "Webinar online",
+    "price": "Consultar",
+    "certificate": "Sim",
+    "organizer": "PNAEQ / ProMeQuaLab",
+    "link": "Plataforma ProMeQuaLab",
+    "region": "Online",
+    "description": "Sessão formativa com a palestrante Paula Palminha sobre as diretrizes laboratoriais e abordagens no diagnóstico da Rubéola."
+  },
+  {
+    "title": "Formação ProMeQuaLab: Sistema de Gestão da Qualidade",
+    "date": "13 Julho 2026",
+    "category": "Qualidade",
+    "type": "Webinar online",
+    "price": "Consultar",
+    "certificate": "Sim",
+    "organizer": "PNAEQ / ProMeQuaLab",
+    "link": "Plataforma ProMeQuaLab",
+    "region": "Online",
+    "description": "Formação focada na implementação e melhoria do sistema de gestão da qualidade em laboratórios de saúde, com a palestrante Carmen Aguiar."
+  },
+  {
+    "title": "Formação ProMeQuaLab: Boas práticas na execução do exame de urina de rotina",
+    "date": "13 Agosto 2026",
+    "category": "Qualidade",
+    "type": "Webinar online",
+    "price": "Consultar",
+    "certificate": "Sim",
+    "organizer": "PNAEQ / ProMeQuaLab",
+    "link": "Plataforma ProMeQuaLab",
+    "region": "Online",
+    "description": "Sessão de esclarecimento sobre urinálise e boas práticas na execução do exame básico de urina, com a palestrante Michelle Lima Garcez."
+  },
+  {
+    "title": "Formação ProMeQuaLab: Desempenho dos participantes do PNAEQ — Morfologia sangue periférico (2020-2024)",
+    "date": "24 Setembro 2026",
+    "category": "Hematologia",
+    "type": "Webinar online",
+    "price": "Consultar",
+    "certificate": "Sim",
+    "organizer": "PNAEQ / ProMeQuaLab",
+    "link": "Plataforma ProMeQuaLab",
+    "region": "Online",
+    "description": "Análise retrospetiva e discussão do desempenho global no controlo de qualidade externo de morfologia hematológica, com a palestrante Cláudia Flores."
+  }
+];
+
+// ==========================================
+// 2. ARQUIVO DE EVENTOS (Já Decorridos)
+// ==========================================
+export const archivedEvents = [
   {
     "title": "9º Encontro Nacional de Diagnóstico Pré-Natal",
     "date": "12-13 Fevereiro 2026",
-    "category": "Genética / Pré-Natal",
+    "category": "Genética Molecular",
     "type": "Encontro Presencial",
-    "price": "A consultar",
-    "certificate": "Consultar organização",
+    "price": "Consultar",
+    "certificate": "Sim",
     "organizer": "SPG",
     "link": "https://www.spg.pt",
     "region": "Portugal",
-    "description": "Encontro nacional dedicado ao diagnóstico pré-natal."
+    "description": "Encontro focado nos avanços em diagnóstico pré-natal e genética médica."
   },
   {
     "title": "Webinar: Inteligência Artificial no Laboratório Clínico",
     "date": "26 Fevereiro 2026",
-    "category": "Inovação / Gestão",
+    "category": "Qualidade",
     "type": "Webinar online",
-    "price": "A consultar",
-    "certificate": "Consultar organização",
+    "price": "Gratuito",
+    "certificate": "Sim",
     "organizer": "SPQC",
     "link": "https://www.spqc.pt",
     "region": "Online",
-    "description": "Webinar sobre o impacto da inteligência artificial no laboratório clínico."
+    "description": "Aplicações e impacto da inteligência artificial nas análises clínicas."
   },
   {
     "title": "Curso Prático de Citometria de Fluxo Hematológica",
     "date": "05-06 Março 2026",
     "category": "Hematologia",
     "type": "Curso Presencial",
-    "price": "A consultar",
-    "certificate": "Consultar organização",
+    "price": "Consultar",
+    "certificate": "Sim",
     "organizer": "IPOLFG",
     "link": "https://www.ipolisboa.min-saude.pt",
-    "region": "Portugal",
-    "description": "Curso prático dedicado à citometria de fluxo hematológica."
+    "region": "Lisboa, Portugal",
+    "description": "Abordagem prática da citometria de fluxo aplicada a patologias hematológicas."
   },
   {
     "title": "12º Congresso Nacional de Medicina Laboratorial",
     "date": "19-21 Março 2026",
-    "category": "Geral / Polivalente",
+    "category": "Medicina Laboratorial",
     "type": "Congresso Presencial",
-    "price": "A consultar",
-    "certificate": "Consultar organização",
+    "price": "Consultar",
+    "certificate": "Sim",
     "organizer": "SPML",
     "link": "https://www.spml.pt",
     "region": "Portugal",
-    "description": "Congresso nacional dedicado à medicina laboratorial."
+    "description": "Grande congresso nacional de medicina laboratorial e análises clínicas."
   },
   {
     "title": "Webinar: Atualização em Marcadores Cardíacos",
     "date": "09 Abril 2026",
     "category": "Bioquímica Clínica",
     "type": "Webinar online",
-    "price": "A consultar",
-    "certificate": "Consultar organização",
+    "price": "Gratuito",
+    "certificate": "Sim",
     "organizer": "AACC Europe",
     "link": "https://www.aacc.org",
     "region": "Online",
-    "description": "Webinar de atualização em marcadores cardíacos."
+    "description": "Revisão sobre o papel dos biomarcadores cardíacos na urgência e rotina."
   },
   {
     "title": "Jornadas de Primavera de Doenças Infeciosas",
     "date": "23-24 Abril 2026",
     "category": "Microbiologia / Infeção",
     "type": "Jornadas Presenciais",
-    "price": "A consultar",
-    "certificate": "Consultar organização",
+    "price": "Consultar",
+    "certificate": "Sim",
     "organizer": "SPMI",
     "link": "https://www.spmi.pt",
     "region": "Portugal",
-    "description": "Jornadas dedicadas às doenças infeciosas."
+    "description": "Discussão multidisciplinar de patologia infeciosa e diagnóstico microbiológico."
   },
   {
     "title": "Workshop: Validação de Métodos segundo a ISO 15189:2022",
     "date": "07 Maio 2026",
     "category": "Qualidade",
     "type": "Workshop Presencial",
-    "price": "A consultar",
-    "certificate": "Consultar organização",
+    "price": "Consultar",
+    "certificate": "Sim",
     "organizer": "RELACRE",
     "link": "https://www.relacre.pt",
-    "region": "Portugal",
-    "description": "Workshop sobre validação de métodos segundo a ISO 15189:2022."
+    "region": "Lisboa, Portugal",
+    "description": "Sessão prática focada nos requisitos de validação da nova norma ISO 15189."
   },
   {
     "title": "Simpósio Ibero-Americano de Erros Inatos do Metabolismo",
     "date": "14-15 Maio 2026",
-    "category": "Bioquímica / Genética",
+    "category": "Bioquímica Clínica",
     "type": "Simpósio Presencial",
-    "price": "A consultar",
-    "certificate": "Consultar organização",
+    "price": "Consultar",
+    "certificate": "Sim",
     "organizer": "Insa",
     "link": "https://www.insa.min-saude.pt",
-    "region": "Portugal",
-    "description": "Simpósio dedicado a erros inatos do metabolismo."
+    "region": "Lisboa, Portugal",
+    "description": "Rastreio e novas abordagens diagnósticas em doenças metabólicas raras."
   },
   {
     "title": "Webinar: Automação e Futuro da Microbiologia",
     "date": "28 Maio 2026",
-    "category": "Microbiologia",
+    "category": "Microbiologia / Infeção",
     "type": "Webinar online",
-    "price": "A consultar",
-    "certificate": "Consultar organização",
+    "price": "Gratuito",
+    "certificate": "Sim",
     "organizer": "BD Biosciences",
     "link": "https://www.bd.com",
     "region": "Online",
-    "description": "Webinar sobre automação e futuro da microbiologia."
-  },
-  {
-    "title": "Curso de Lípidos e Risco Cardiovascular Avançado",
-    "date": "04-05 Junho 2026",
-    "category": "Bioquímica Clínica",
-    "type": "Curso Presencial",
-    "price": "A consultar",
-    "certificate": "Consultar organização",
-    "organizer": "Soc. Pt. Cardiologia",
-    "link": "https://www.spc.pt",
-    "region": "Portugal",
-    "description": "Curso sobre lípidos e risco cardiovascular avançado."
-  },
-  {
-    "title": "Curso Intensivo de Monitorização de Fármacos e Toxicologia",
-    "date": "14-15 Janeiro 2027",
-    "category": "Bioquímica / Toxicologia",
-    "type": "Curso Intensivo",
-    "price": "A consultar",
-    "certificate": "Consultar organização",
-    "organizer": "FFUP",
-    "link": "https://www.ff.up.pt",
-    "region": "Portugal",
-    "description": "Curso intensivo de monitorização de fármacos e toxicologia."
-  },
-  {
-    "title": "Jornadas de Controlo de Qualidade em Laboratórios de Saúde",
-    "date": "28-29 Janeiro 2027",
-    "category": "Qualidade",
-    "type": "Jornadas Presenciais",
-    "price": "A consultar",
-    "certificate": "Consultar organização",
-    "organizer": "PNAEQ",
-    "link": "https://www.pnaeq.pt",
-    "region": "Portugal",
-    "description": "Jornadas sobre controlo de qualidade em laboratórios de saúde."
-  },
-  {
-    "title": "Webinar: O Laboratório Clínico na Medicina de Precisão",
-    "date": "11 Fevereiro 2027",
-    "category": "Inovação / Genética",
-    "type": "Webinar online",
-    "price": "A consultar",
-    "certificate": "Consultar organização",
-    "organizer": "Roche Diagnostics",
-    "link": "https://www.roche.pt",
-    "region": "Online",
-    "description": "Webinar sobre o laboratório clínico na medicina de precisão."
-  },
-  {
-    "title": "Webinar: Accelerated diagnostic chest pain protocols; evidence and pitfalls in implementation",
-    "date": "9 Junho 2026",
-    "category": "Qualidade / Urgência",
-    "type": "Webinar online",
-    "price": "A consultar",
-    "certificate": "Consultar organização",
-    "organizer": "EFLM",
-    "link": "https://www.eflm.eu/",
-    "region": "Online",
-    "description": "Webinar sobre protocolos acelerados de diagnóstico de dor torácica, evidência e desafios de implementação."
+    "description": "Sistemas automatizados de hemoculturas e identificação rápida."
   }
-]
-
-const categories = [
-  "Medicina Laboratorial",
-  "Geral / Polivalente",
-  "Autoimunidade",
-  "Bioquímica Clínica",
-  "Hematologia",
-  "Hematologia / Oncologia",
-  "Hematologia / Qualidade",
-  "Coagulação e Hemostase",
-  "Imunologia",
-  "Microbiologia / Infeção",
-  "Microbiologia",
-  "Genética Molecular",
-  "Genética / Pré-Natal",
-  "Genética / Inovação",
-  "Inovação / Genética",
-  "Bioquímica / Genética",
-  "Biologia Molecular",
-  "Qualidade",
-  "Qualidade / Pré-analítica",
-  "Qualidade / POCT",
-  "Qualidade / Urgência",
-  "Qualidade / Urinálise",
-  "Doenças Raras",
-  "Anatomia Patológica",
-  "Anatomia Patológica / Oncologia",
-  "Investigação / Bioestatística",
-  "Bioquímica / Urgência",
-  "Bioquímica / Toxicologia",
-  "Bioquímica Clínica / Nefrologia",
-  "Neurologia / Bioquímica",
-  "Inovação / Gestão"
-]
-
-function Button({ children, variant = 'primary', className = '' }) {
-  return <button className={`btn ${variant === 'outline' ? 'btn-outline' : 'btn-primary'} ${className}`}>{children}</button>
-}
-
-function submissionHref() {
-  if (googleFormUrl) return googleFormUrl
-  return `mailto:${contactEmail}?subject=Sugest%C3%A3o%20de%20evento%20para%20o%20MedLab%20Calendar&body=Ol%C3%A1%2C%0A%0AGostaria%20de%20sugerir%20o%20seguinte%20evento%3A%0A%0AT%C3%ADtulo%3A%0AData%3A%0AOrganizador%3A%0A%C3%81rea%3A%0AFormato%3A%0ALink%20oficial%3A%0A%0AObrigada.`
-}
-
-function SuggestEventLink({ children }) {
-  return <a href={submissionHref()} target={googleFormUrl ? '_blank' : undefined} rel={googleFormUrl ? 'noreferrer' : undefined}>{children}</a>
-}
-
-function EventCard({ event }) {
-  return (
-    <div className="card event-card">
-      <div className="event-card-top"><span className="tag">{event.category}</span><ExternalLink size={17} /></div>
-      <h3>{event.title}</h3>
-      <p className="muted">{event.organizer}</p>
-      <p className="description">{event.description}</p>
-      <div className="details">
-        <p><strong>Data:</strong> {event.date}</p>
-        <p><strong>Formato:</strong> {event.type}</p>
-        <p><strong>Custo:</strong> {event.price}</p>
-        <p><strong>Certificado:</strong> {event.certificate}</p>
-      </div>
-      <a href={event.link} target="_blank" rel="noreferrer"><Button variant="outline" className="full">Ver página oficial</Button></a>
-    </div>
-  )
-}
-
-function App() {
-  const featuredEvents = events.slice(0, 4)
-
-  return (
-    <div className="page">
-      <header className="header">
-        <div className="container nav">
-          <div className="brand">
-            <div className="brand-icon"><Microscope size={22} /></div>
-            <div>
-              <p className="brand-title">MedLab Calendar</p>
-              <p className="brand-subtitle">Laboratory Medicine Education Hub</p>
-            </div>
-          </div>
-          <nav className="nav-links">
-            <a href="#about">Sobre</a>
-            <a href="#events">Eventos</a>
-            <a href="#categories">Categorias</a>
-            <a href="#organizers">Para Organizadores</a>
-          </nav>
-          <a href="#events"><Button>Ver eventos</Button></a>
-        </div>
-      </header>
-
-      <main>
-        <section className="container hero">
-          <div>
-            <div className="pill"><CalendarDays size={16} /> Calendário de formação para profissionais de laboratório</div>
-            <h1>Cursos, webinars e eventos laboratoriais num só lugar.</h1>
-            <p className="lead">O MedLab Calendar reúne cursos, webinars, congressos e reuniões científicas num único local, facilitando o acesso a oportunidades de aprendizagem contínua.</p>
-            <div className="hero-actions">
-              <a href="#events"><Button>Explorar próximos eventos</Button></a>
-              <SuggestEventLink><Button variant="outline">Submeter evento</Button></SuggestEventLink>
-              <a href="https://1534ef9d.sibforms.com/serve/MUIFAHFh5N7BeM-dVw2LycaCbsspKR2qDeIx-bR6hWDL3C_3flMkcOYIvSZhwbQFOZkkX6WIeH4AUHaz8iRgywSR6IXV0cCHoHHbe2f0toIHQKYqkVCRKJpywPb2QCAA3D_x5pV1Pl4oJ8qdLPwya_iaMkJU5RHsgFo-D4Iizfs61iTuEvA-NhRSvcmw3BalvcZxEFA1z1AqQ4949w==" target="_blank" rel="noreferrer"><Button variant="outline">Subscrever Newsletter</Button></a>
-            </div>
-            <p className="small">Contacto: <a className="inline-link" href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
-          </div>
-
-          <div className="card feature-card">
-            <div className="card-header">
-              <div><p className="eyebrow">Próximos eventos</p><h2>Eventos em destaque</h2></div>
-              <div className="soft-icon"><Filter size={20} /></div>
-            </div>
-            <div className="event-list">
-              {featuredEvents.map((event) => (
-                <div className="event-row" key={event.title}>
-                  <div className="event-top">
-                    <div><p className="event-title">{event.title}</p><p className="muted">{event.organizer}</p></div>
-                    <span className="tag">{event.category}</span>
-                  </div>
-                  <div className="event-meta"><span>{event.date}</span><span>{event.type}</span><span>{event.region}</span><span>{event.price}</span></div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="about" className="intro-section">
-          <div className="container intro-card">
-            <div className="soft-icon"><HeartHandshake size={22} /></div>
-            <p className="eyebrow">Sobre</p>
-            <h2>Uma ferramenta criada para ajudar colegas e fortalecer a comunidade laboratorial.</h2>
-            <p>A formação em medicina laboratorial encontra-se frequentemente dispersa entre sociedades científicas, universidades, hospitais, empresas e redes profissionais. O MedLab Calendar reúne cursos, webinars, congressos e reuniões científicas num único local, facilitando o acesso a oportunidades de aprendizagem contínua.</p>
-            <p>O projeto tem uma abordagem de curadoria independente: cada evento é resumido de forma simples e encaminha para a página oficial da entidade organizadora.</p>
-          </div>
-        </section>
-
-        <section id="events" className="white-section">
-          <div className="container">
-            <div className="section-head">
-              <div><p className="eyebrow">Eventos e formações</p><h2>Descobre formação relevante sem perder tempo à procura.</h2></div>
-              <div className="search-box">Pesquisar por tema, área ou organizador</div>
-            </div>
-            <div className="notice">São apresentados prioritariamente eventos futuros ou formações atualmente disponíveis.</div>
-            <div className="grid-3">{events.map((event) => <EventCard event={event} key={event.title} />)}</div>
-          </div>
-        </section>
-
-        <section id="categories" className="container categories-section">
-          <div className="section-intro">
-            <p className="eyebrow">Categorias</p>
-            <h2>Eventos organizados por área.</h2>
-            <p>As formações, cursos e reuniões científicas são distribuídos pelas respetivas áreas para facilitar a navegação.</p>
-          </div>
-          <div className="category-event-grid">
-            {categories.map((category) => {
-              const matchingEvents = events.filter((event) => event.category === category)
-              return (
-                <div className="category-panel" key={category}>
-                  <div className="category-title-row"><CheckCircle2 size={22} /><h3>{category}</h3></div>
-                  {matchingEvents.length > 0 ? (
-                    <div className="mini-event-list">
-                      {matchingEvents.map((event) => (
-                        <a href={event.link} target="_blank" rel="noreferrer" className="mini-event" key={`${category}-${event.title}`}>
-                          <strong>{event.title}</strong>
-                          <span>{event.date} · {event.organizer}</span>
-                        </a>
-                      ))}
-                    </div>
-                  ) : <p className="muted">Sem eventos adicionados nesta categoria por enquanto.</p>}
-                </div>
-              )
-            })}
-          </div>
-        </section>
-
-        <section id="organizers" className="container organizers-section">
-          <div className="organizers-card">
-            <div>
-              <div className="soft-icon"><ClipboardList size={22} /></div>
-              <p className="eyebrow">Para Organizadores</p>
-              <h2>Divulgue cursos, webinars e reuniões científicas relevantes.</h2>
-              <p>O MedLab Calendar aceita sugestões de eventos de sociedades científicas, universidades, hospitais, laboratórios, empresas e outras entidades com formação relevante para a medicina laboratorial.</p>
-            </div>
-            <div className="organizers-copy">
-              <p><strong>Informação recomendada:</strong> título, data, organizador, área, formato, local, custo, certificado e link oficial.</p>
-              <p><strong>Email:</strong> <a className="inline-link" href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
-              <p><strong>Importante:</strong> a plataforma atua apenas como serviço de curadoria e divulgação. Os eventos pertencem às respetivas entidades organizadoras.</p>
-              <SuggestEventLink><Button>Submeter evento</Button></SuggestEventLink>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <footer className="footer">
-        <div className="container footer-content">
-          <div>
-            <p>© 2026 MedLab Calendar. Curadoria independente de formação laboratorial.</p>
-            <p>Os eventos apresentados são da responsabilidade das entidades organizadoras. O MedLab Calendar atua apenas como plataforma de divulgação.</p>
-          </div>
-          <p>Contacto: <a className="inline-link" href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
-        </div>
-      </footer>
-    </div>
-  )
-}
-
-createRoot(document.getElementById('root')).render(<App />)
+];
