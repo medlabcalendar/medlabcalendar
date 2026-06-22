@@ -6,50 +6,31 @@ import {
   ExternalLink,
   Microscope,
   Filter,
+  CheckCircle2,
   HeartHandshake,
   ClipboardList,
   Download,
   Archive,
   ChevronLeft,
   ChevronRight,
+  Dna,
+  Droplets,
+  ShieldCheck,
   FlaskConical,
-  Star
+  Ambulance,
+  BarChart3,
+  Lightbulb,
+  TestTube2
 } from 'lucide-react'
 import './styles.css'
 
 const contactEmail = 'medlabcalendar@gmail.com'
 const googleFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSc22SEwuG9LJnLsQ0tgRrJA9zx2Fsr7cZ6iA9g06qRnemOxVw/viewform'
+
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRNMDWDdFpEBXYUUKpw87IYCdmy_Y6bTGKzpKpDuundPcyfxvEZZ9SvSzQ_rTb2TZMk0z-T6b5Yzs4f/pub?output=csv'
 
-// Fallback estático adaptado para a nova estrutura dinâmica
-const fallbackEvents = [
-  {
-    "title": "9º Encontro Nacional de Diagnóstico Pré-Natal",
-    "date": "2026/06/12 - 2026/06/13",
-    "category": "Genética",
-    "type": "Encontro Presencial",
-    "price": "A consultar",
-    "certificate": "Sim",
-    "organizer": "Comissão Nacional de Diagnóstico Pré-Natal",
-    "link": "https://www.medlabcalendar.vercel.app",
-    "region": "Portugal",
-    "description": "Encontro nacional focado nas atualizações científicas e diretrizes em diagnóstico pré-natal.",
-    "featured": "Sim"
-  },
-  {
-    "title": "Webinar: Inteligência Artificial no Laboratório Clínico",
-    "date": "2026/02/26",
-    "category": "Inovação",
-    "type": "Webinar online",
-    "price": "Gratuito",
-    "certificate": "Sim",
-    "organizer": "Sociedade Portuguesa de Medicina Laboratorial",
-    "link": "https://www.medlabcalendar.vercel.app",
-    "region": "Online",
-    "description": "Discussão sobre o impacto, desafios e futuro da inteligência artificial na rotina do laboratório clínico.",
-    "featured": "Sim"
-  }
-]
+// ESVAZIADO: Agora o código não tem eventos "presos" por defeito. Tudo virá da Google Sheet!
+const fallbackEvents = []
 
 const monthNames = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -57,16 +38,36 @@ const monthNames = [
 ]
 
 const monthMap = {
-  janeiro: 0, fevereiro: 1, marco: 2, março: 2, abril: 3, maio: 4, junho: 5,
+  janeiro: 0, fevereiro: 1, março: 2, marco: 2, abril: 3, maio: 4, junho: 5,
   julho: 6, agosto: 7, setembro: 8, outubro: 9, novembro: 10, dezembro: 11
 }
 
-// --- UTILITÁRIOS AUXILIARES ---
 function normalizeText(value = '') {
   return String(value)
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
+}
+
+function cleanCategoryName(rawCategory) {
+  if (!rawCategory) return 'Medicina Laboratorial'
+  const trimmed = rawCategory.trim()
+  const normalized = normalizeText(trimmed)
+
+  if (normalized.includes('anatomia')) return 'Anatomia Patológica'
+  if (normalized.includes('biologia molecular')) return 'Biologia Molecular'
+  if (normalized.includes('bioestatistica') || normalized.includes('investigacao')) return 'Bioestatística'
+  if (normalized.includes('toxicologia')) return 'Toxicologia'
+  if (normalized.includes('urgencia')) return 'Urgência'
+  if (normalized.includes('bioquimica')) return 'Bioquímica Clínica'
+  if (normalized.includes('genetica')) return 'Genética'
+  if (normalized.includes('hematologia') || normalized.includes('hemostase') || normalized.includes('coagulacao')) return 'Hematologia'
+  if (normalized.includes('microbiologia')) return 'Microbiologia'
+  if (normalized.includes('qualidade')) return 'Qualidade'
+  if (normalized.includes('medicina laboratorial')) return 'Medicina Laboratorial'
+  if (normalized.includes('inovacao') || normalized.includes('inteligencia artificial')) return 'Inovação'
+
+  return trimmed
 }
 
 function parseCSV(text) {
@@ -113,64 +114,117 @@ function parseCSV(text) {
       raw[header] = cells[index] || ''
     })
 
-    const activeValue = normalizeText(raw.ativo || raw.status || '')
+    const activeValue = normalizeText(raw.ativo || raw.ativo_ || raw.status || '')
     const isActive = !activeValue || ['sim', 'yes', 'published', 'publicado', 'ativo'].some((word) => activeValue.includes(word))
 
     return {
       title: raw.titulo || raw.title || '',
-      date: raw.data || raw.date || raw.startdate || '',
-      category: raw.categoria || raw.category || 'Geral', 
-      type: raw.tipoformato || raw.formato || raw.type || 'Outro',
+      date: raw.data || raw.date || raw.startdate || raw.datainicio || '',
+      startDateRaw: raw.startdate || raw.datainicio || '',
+      endDateRaw: raw.enddate || raw.datafim || '',
+      category: cleanCategoryName(raw.categoria || raw.category || ''),
+      type: raw.tipoformato || raw.formato || raw.type || '',
       organizer: raw.organizador || raw.organizer || '',
       link: raw.linkoficial || raw.link || raw.url || '',
       price: raw.custo || raw.price || raw.preco || '',
       certificate: raw.certificado || raw.certificate || '',
       region: raw.regiao || raw.region || raw.local || '',
       description: raw.descricao || raw.description || '',
-      featured: raw.destaque || raw.featured || 'Não',
       status: isActive ? 'published' : 'draft',
     }
   }).filter((event) => event.title && event.status === 'published')
 }
 
 function parseEventDate(dateText = '') {
-  const clean = normalizeText(dateText).replace(/\//g, '-').replace(/[–—]/g, '-').replace(/\s+/g, ' ').trim()
+  const original = String(dateText)
+  const clean = normalizeText(original)
+    .replace(/\//g, '-')
+    .replace(/[–—]/g, '-')
+    .replace(/\s+/g, ' ')
+    .trim()
+
   const isoRange = clean.match(/(20\d{2})-(\d{1,2})-(\d{1,2})(?:\s*-\s*(20\d{2})-(\d{1,2})-(\d{1,2}))?/)
-  
   if (isoRange) {
-    const start = new Date(Number(isoRange[1]), Number(isoRange[2]) - 1, Number(isoRange[3]), 9, 0, 0)
+    const startYear = Number(isoRange[1])
+    const startMonth = Number(isoRange[2]) - 1
+    const startDay = Number(isoRange[3])
+    const start = new Date(startYear, startMonth, startDay, 9, 0, 0)
     const end = isoRange[4]
       ? new Date(Number(isoRange[4]), Number(isoRange[5]) - 1, Number(isoRange[6]), 18, 0, 0)
-      : new Date(Number(isoRange[1]), Number(isoRange[2]) - 1, Number(isoRange[3]), 23, 59, 59)
+      : new Date(startYear, startMonth, startDay, 23, 59, 59, 999)
     return { start, end, isApproximate: false }
   }
 
-  const yearMatches = [...clean.matchAll(/20\d{2}/g)].map((m) => Number(m[0]))
-  const monthMatches = [...clean.matchAll(/janeiro|fevereiro|marco|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro/g)].map((m) => m[0])
-  const dayMatches = [...clean.matchAll(/\b(\d{1,2})\b/g)].map((m) => Number(m[1])).filter((d) => d >= 1 && d <= 31)
+  const yearMatches = [...clean.matchAll(/20\d{2}/g)].map((match) => Number(match[0]))
+  const monthMatches = [...clean.matchAll(/janeiro|fevereiro|marco|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro/g)].map((match) => match[0])
+  const dayMatches = [...clean.matchAll(/\b(\d{1,2})\b/g)]
+    .map((match) => Number(match[1]))
+    .filter((day) => day >= 1 && day <= 31)
 
   const startYear = yearMatches[0] || 2026
   const endYear = yearMatches[1] || startYear
 
-  if (clean.includes('ultima segunda-feira') || clean.includes('cada mes') || clean.includes('periodo letivo') || clean.includes('a confirmar')) {
-    return { start: new Date(startYear, 0, 1, 9, 0, 0), end: new Date(Math.max(endYear, startYear + 1), 11, 31, 18, 0, 0), isApproximate: true }
+  if (clean.includes('ultima segunda-feira') || clean.includes('cada mes')) {
+    return {
+      start: new Date(startYear, 0, 1, 9, 0, 0),
+      end: new Date(Math.max(endYear, startYear + 1), 11, 31, 18, 0, 0),
+      isApproximate: true,
+    }
+  }
+
+  if (clean.includes('periodo letivo')) {
+    return {
+      start: new Date(startYear, 0, 1, 9, 0, 0),
+      end: new Date(endYear, 11, 31, 18, 0, 0),
+      isApproximate: true,
+    }
+  }
+
+  if (clean.includes('a confirmar')) {
+    return {
+      start: new Date(startYear, 11, 31, 9, 0, 0),
+      end: new Date(startYear, 11, 31, 18, 0, 0),
+      isApproximate: true,
+    }
+  }
+
+  if (clean.includes('ao longo')) {
+    return {
+      start: new Date(startYear, 0, 1, 9, 0, 0),
+      end: new Date(startYear, 11, 31, 18, 0, 0),
+      isApproximate: true,
+    }
   }
 
   const startMonth = monthMatches[0] ? monthMap[monthMatches[0]] : 0
   const endMonth = monthMatches[1] ? monthMap[monthMatches[1]] : startMonth
-  const startDay = dayMatches[0] || 1
-  const endDay = dayMatches[1] || startDay
-  const lastDay = new Date(endYear, endMonth + 1, 0).getDate()
+  const hasExplicitDay = dayMatches.length > 0
+  const startDay = hasExplicitDay ? dayMatches[0] : 1
+  const endDay = dayMatches.length > 1 ? dayMatches[1] : startDay
+  const lastDayOfEndMonth = new Date(endYear, endMonth + 1, 0).getDate()
 
   return {
     start: new Date(startYear, startMonth, startDay, 9, 0, 0),
-    end: new Date(endYear, endMonth, dayMatches.length > 1 ? endDay : lastDay, 18, 0, 0),
-    isApproximate: dayMatches.length === 0,
+    end: new Date(endYear, endMonth, hasExplicitDay ? endDay : lastDayOfEndMonth, 18, 0, 0),
+    isApproximate: !hasExplicitDay,
   }
 }
 
+function isCalendarEventOnDay(event, day) {
+  return (
+    event.startDate.getFullYear() === day.getFullYear() &&
+    event.startDate.getMonth() === day.getMonth() &&
+    event.startDate.getDate() === day.getDate()
+  );
+}
+
+function isFreeEvent(event) {
+  const text = normalizeText(`${event.price || ''} ${event.type || ''} ${event.title || ''} ${event.description || ''}`)
+  return text.includes('gratuito') || text.includes('gratis') || text.includes('free')
+}
+
 function formatGoogleDate(date) {
-  const pad = (v) => String(v).padStart(2, '0')
+  const pad = (value) => String(value).padStart(2, '0')
   return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}00`
 }
 
@@ -178,40 +232,45 @@ function getGoogleCalendarUrl(event) {
   const { start, end } = parseEventDate(event.date)
   const params = new URLSearchParams({
     action: 'TEMPLATE',
-    text: event.title,
+    text: event.title || 'Evento MedLab Calendar',
     dates: `${formatGoogleDate(start)}/${formatGoogleDate(end)}`,
-    details: `${event.description || ''}\n\nOrganizador: ${event.organizer || ''}\nCategoria: ${event.category || ''}`,
-    location: event.region || 'Online',
+    details: `${event.description || ''}\n\nOrganizador: ${event.organizer || ''}\nCategoria: ${event.category || ''}\nFormato: ${event.type || ''}\nCusto: ${event.price || ''}\nCertificado: ${event.certificate || ''}\nLink oficial: ${event.link || ''}`,
+    location: event.region || event.type || 'Online',
   })
   return `https://calendar.google.com/calendar/render?${params.toString()}`
+}
+
+function Button({ children, variant = 'primary', className = '', onClick, type = 'button' }) {
+  return <button type={type} onClick={onClick} className={`btn ${variant === 'outline' ? 'btn-outline' : 'btn-primary'} ${className}`}>{children}</button>
+}
+
+function submissionHref() {
+  if (googleFormUrl) return googleFormUrl
+  return `mailto:${contactEmail}?subject=Sugest%C3%A3o%20de%20evento%20para%20o%20MedLab%20Calendar&body=Ol%C3%A1%2C%0A%0AGostaria%20de%20sugerir%20o%20seguinte%20evento%3A%0A%0AT%C3%ADtulo%3A%0AData%3A%0AOrganizador%3A%0A%C3%81rea%3A%0AFormato%3A%0ALink%20oficial%3A%0A%0AObrigada.`
+}
+
+function SuggestEventLink({ children }) {
+  return <a href={submissionHref()} target={googleFormUrl ? '_blank' : undefined} rel={googleFormUrl ? 'noreferrer' : undefined}>{children}</a>
 }
 
 function getPreparedEvents(eventsSource) {
   const now = new Date()
   return eventsSource
     .map((event) => {
-      const parsedDate = parseEventDate(event.date)
-      const text = normalizeText(`${event.price} ${event.type} ${event.title} ${event.description}`)
-      const isFree = text.includes('gratuito') || text.includes('gratis') || text.includes('free')
+      const normalizedEvent = { ...event, category: cleanCategoryName(event.category) }
+      const parsedDate = parseEventDate(normalizedEvent.date)
+      const diffDays = Math.ceil((parsedDate.end - parsedDate.start) / (1000 * 60 * 60 * 24))
       return {
-        ...event,
+        ...normalizedEvent,
         startDate: parsedDate.start,
         endDate: parsedDate.end,
         isApproximate: parsedDate.isApproximate,
+        isLongRange: diffDays > 14,
         isArchived: parsedDate.end < now,
-        isFree,
+        isFree: isFreeEvent(normalizedEvent),
       }
     })
     .sort((a, b) => a.startDate - b.startDate)
-}
-
-// --- COMPONENTES ATÓMICOS REUTILIZÁVEIS ---
-function Button({ children, variant = 'primary', className = '', onClick }) {
-  return (
-    <button onClick={onClick} className={`btn ${variant === 'outline' ? 'btn-outline' : 'btn-primary'} ${className}`}>
-      {children}
-    </button>
-  )
 }
 
 function EventCard({ event }) {
@@ -220,7 +279,7 @@ function EventCard({ event }) {
       <div className="event-card-top">
         <span className="tag">{event.category}</span>
         {event.isFree && <span className="tag free-badge">Gratuito</span>}
-        {normalizeText(event.featured) === 'sim' && <span className="tag featured-badge"><Star size={12} fill="currentColor"/> Destaque</span>}
+        {event.isArchived && <span className="tag archived-badge"><Archive size={14} /> Arquivo</span>}
         <ExternalLink size={17} />
       </div>
       <h3>{event.title}</h3>
@@ -234,14 +293,15 @@ function EventCard({ event }) {
       </div>
       <div className="card-actions">
         <a href={event.link} target="_blank" rel="noreferrer"><Button variant="outline" className="full">Ver página oficial</Button></a>
-        <a href={getGoogleCalendarUrl(event)} target="_blank" rel="noreferrer"><Button variant="outline" className="full"><Download size={15} /> Calendar</Button></a>
+        <a href={getGoogleCalendarUrl(event)} target="_blank" rel="noreferrer"><Button variant="outline" className="full"><Download size={15} /> Adicionar ao Google Calendar</Button></a>
       </div>
     </div>
   )
 }
 
 function MonthlyCalendar({ events }) {
-  const [visibleMonth, setVisibleMonth] = useState(new Date(new Date().getFullYear(), new Date().getMonth(), 1))
+  const today = new Date()
+  const [visibleMonth, setVisibleMonth] = useState(new Date(today.getFullYear(), today.getMonth(), 1))
 
   const calendarDays = useMemo(() => {
     const firstDay = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth(), 1)
@@ -255,15 +315,14 @@ function MonthlyCalendar({ events }) {
       return {
         date,
         inMonth: date.getMonth() === visibleMonth.getMonth(),
-        events: events.filter((event) => {
-          if (event.isApproximate) return event.startDate.getFullYear() === date.getFullYear() && event.startDate.getMonth() === date.getMonth() && date.getDate() === 1
-          const dStart = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0)
-          const dEnd = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59)
-          return event.startDate <= dEnd && event.endDate >= dStart && !event.isArchived
-        }),
+        events: events.filter((event) => isCalendarEventOnDay(event, date) && !event.isArchived),
       }
     })
   }, [visibleMonth, events])
+
+  function moveMonth(delta) {
+    setVisibleMonth(new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + delta, 1))
+  }
 
   return (
     <section className="white-section calendar-section" id="calendar">
@@ -274,19 +333,19 @@ function MonthlyCalendar({ events }) {
             <h2>{monthNames[visibleMonth.getMonth()]} {visibleMonth.getFullYear()}</h2>
           </div>
           <div className="calendar-controls">
-            <Button variant="outline" onClick={() => setVisibleMonth(new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() - 1, 1))}><ChevronLeft size={16} /> Anterior</Button>
-            <Button variant="outline" onClick={() => setVisibleMonth(new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1, 1))}>Seguinte <ChevronRight size={16} /></Button>
+            <Button variant="outline" onClick={() => moveMonth(-1)}><ChevronLeft size={16} /> Mês anterior</Button>
+            <Button variant="outline" onClick={() => moveMonth(1)}>Mês seguinte <ChevronRight size={16} /></Button>
           </div>
         </div>
         <div className="monthly-calendar">
-          {['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'].map((d) => <div className="calendar-weekday" key={d}>{d}</div>)}
+          {['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'].map((day) => <div className="calendar-weekday" key={day}>{day}</div>)}
           {calendarDays.map(({ date, inMonth, events: dayEvents }) => (
             <div className={`calendar-day ${inMonth ? '' : 'calendar-day-muted'}`} key={date.toISOString()}>
               <strong>{date.getDate()}</strong>
-              {dayEvents.slice(0, 2).map((e) => (
-                <a href={e.link} target="_blank" rel="noreferrer" className={`calendar-event-pill ${e.isFree ? 'free-calendar-event' : ''}`} key={e.title}>{e.title}</a>
+              {dayEvents.slice(0, 3).map((event) => (
+                <a href={event.link} target="_blank" rel="noreferrer" className={`calendar-event-pill ${event.isFree ? 'free-calendar-event' : ''}`} key={event.title}>{event.title}</a>
               ))}
-              {dayEvents.length > 2 && <span className="small">+{dayEvents.length - 2} mais</span>}
+              {dayEvents.length > 3 && <span className="small">+{dayEvents.length - 3} eventos</span>}
             </div>
           ))}
         </div>
@@ -295,33 +354,37 @@ function MonthlyCalendar({ events }) {
   )
 }
 
-// --- ESTILOS COMPLEMENTARES ---
 function FeatureStyles() {
   return (
     <style>{`
       .calendar-section { background: #fff; }
-      .calendar-controls { display: flex; gap: 0.75rem; }
+      .calendar-controls { display: flex; gap: 0.75rem; flex-wrap: wrap; }
       .monthly-calendar { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.5rem; }
       .calendar-weekday { font-weight: 700; color: #475569; font-size: 0.85rem; padding: 0.5rem; text-align: center; }
-      .calendar-day { min-height: 110px; border: 1px solid #e2e8f0; border-radius: 14px; padding: 0.55rem; background: #fff; display: flex; flex-direction: column; gap: 0.35rem; }
+      .calendar-day { min-height: 118px; border: 1px solid #e2e8f0; border-radius: 14px; padding: 0.55rem; background: #ffffff; display: flex; flex-direction: column; gap: 0.35rem; }
       .calendar-day-muted { opacity: 0.45; background: #f8fafc; }
-      .calendar-event-pill { display: block; padding: 0.25rem 0.4rem; border-radius: 999px; background: #e0f2fe; color: #075985; font-size: 0.72rem; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-      .free-calendar-event, .free-badge { background: #dcfce7 !important; color: #166534 !important; }
-      .featured-badge { background: #fef3c7 !important; color: #92400e !important; display: inline-flex; align-items: center; gap: 2px; }
-      .free-event { border: 2px solid #86efac; }
+      .calendar-event-pill { display: block; padding: 0.25rem 0.4rem; border-radius: 999px; background: #e0f2fe; color: #075985; font-size: 0.72rem; line-height: 1.2; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .free-calendar-event, .free-badge { background: #dcfce7 !important; color: #166534 !important; border-color: #86efac !important; }
+      .free-event { border: 2px solid #86efac; box-shadow: 0 12px 30px rgba(22, 101, 52, 0.08); }
       .archived-event { opacity: 0.7; }
-      .filters-panel { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 0.75rem; align-items: center; margin: 1rem 0; }
-      .filters-panel input, .filters-panel select { width: 100%; border: 1px solid #cbd5e1; border-radius: 12px; padding: 0.75rem; background: #fff; font: inherit; }
-      .checkbox-filter { display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; cursor: pointer; }
-      .stats-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
+      .archived-badge { background: #f1f5f9; color: #475569; display: inline-flex; align-items: center; gap: 0.25rem; }
+      .filters-panel { display: grid; grid-template-columns: 2fr 1fr 1fr auto auto; gap: 0.75rem; align-items: center; margin: 1rem 0; }
+      .filters-panel input, .filters-panel select { width: 100%; border: 1px solid #cbd5e1; border-radius: 12px; padding: 0.75rem 0.9rem; font: inherit; background: #fff; }
+      .checkbox-filter { display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
+      .stats-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
       .stats-row span { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 999px; padding: 0.45rem 0.75rem; font-size: 0.9rem; }
       .card-actions { display: grid; gap: 0.5rem; margin-top: 1rem; }
-      .category-search-box { display: flex; align-items: center; gap: 0.6rem; max-width: 600px; margin: 1.25rem auto; border: 1px solid #cbd5e1; border-radius: 999px; padding: 0.75rem 1rem; background: #fff; }
-      .category-search-box input { width: 100%; border: 0; outline: 0; font: inherit; }
-      .category-icon-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; }
-      .category-icon-card { border: 1px solid #e2e8f0; border-radius: 20px; padding: 1.25rem 1rem; background: #fff; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; transition: all 0.2s; }
-      .category-icon-card:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-      .category-icon-circle { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #f1f5f9; color: #334155; }
+      .card-actions .btn { display: inline-flex; justify-content: center; align-items: center; gap: 0.35rem; }
+
+      .category-search-box { display: flex; align-items: center; gap: 0.6rem; max-width: 760px; margin: 1.25rem auto 1.5rem; border: 1px solid #cbd5e1; border-radius: 999px; padding: 0.75rem 1rem; background: #fff; }
+      .category-search-box input { width: 100%; border: 0; outline: 0; font: inherit; background: transparent; }
+      .category-icon-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1rem; }
+      .category-icon-card { border: 1px solid #e2e8f0; border-radius: 24px; padding: 1.35rem 1rem; background: #fff; cursor: pointer; text-align: center; display: flex; min-height: 170px; flex-direction: column; align-items: center; justify-content: center; gap: 0.55rem; transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease; }
+      .category-icon-card:hover { transform: translateY(-4px); box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12); border-color: #94a3b8; }
+      .category-icon { width: 68px; height: 68px; border-radius: 999px; display: flex; align-items: center; justify-content: center; background: #f8fafc; color: #0f172a; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08); margin-bottom: 0.35rem; }
+      .category-icon svg { width: 30px; height: 30px; stroke-width: 2; }
+      .category-icon-card strong { color: #0f172a; line-height: 1.25; font-size: 1rem; }
+      .category-icon-card span:last-child { color: #64748b; font-size: 0.9rem; }
       @media (max-width: 900px) {
         .monthly-calendar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .calendar-weekday { display: none; }
@@ -331,71 +394,92 @@ function FeatureStyles() {
   )
 }
 
-// --- APP COMPONENT ---
-function App() {
-  const [rawEvents, setRawEvents] = useState(fallbackEvents)
-  const [sheetStatus, setSheetStatus] = useState('A carregar eventos da Google Sheet...')
+const categoryIcons = {
+  'Genética': Dna,
+  'Inovação': Lightbulb,
+  'Hematologia': Droplets,
+  'Medicina Laboratorial': Microscope,
+  'Bioquímica Clínica': TestTube2,
+  'Microbiologia': Microscope,
+  'Qualidade': ShieldCheck,
+  'Anatomia Patológica': Search,
+  'Biologia Molecular': Dna,
+  'Toxicologia': FlaskConical,
+  'Bioestatística': BarChart3,
+  'Urgência': Ambulance,
+}
 
-  // Filtros de estado da UI
-  const [query, setQuery] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('Todas')
-  const [selectedType, setSelectedType] = useState('Todos')
-  const [onlyFree, setOnlyFree] = useState(false)
-  const [showArchive, setShowArchive] = useState(false)
-  const [categorySearch, setCategorySearch] = useState('')
+function getCategoryIcon(category) {
+  return categoryIcons[category] || FlaskConical
+}
+
+function App() {
+  // AJUSTADO: Começa vazio por defeito até a Google Sheet carregar
+  const [rawEvents, setRawEvents] = useState([])
+  const [sheetStatus, setSheetStatus] = useState('A carregar eventos da Google Sheet...')
 
   useEffect(() => {
     fetch(SHEET_CSV_URL)
-      .then((res) => {
-        if (!res.ok) throw new Error()
-        return res.text()
+      .then((response) => {
+        if (!response.ok) throw new Error('Não foi possível carregar a Google Sheet')
+        return response.text()
       })
       .then((text) => {
         const sheetEvents = parseCSV(text)
         if (sheetEvents.length > 0) {
+          // MODIFICADO: Apenas assume os eventos vindos diretamente da Google Sheet
           setRawEvents(sheetEvents)
-          setSheetStatus(`Eventos sincronizados em tempo real: ${sheetEvents.length}`)
+          setSheetStatus(`Eventos carregados da Google Sheet: ${sheetEvents.length}`)
         } else {
-          setSheetStatus('Ficheiro lido, mas sem eventos publicados ativos. A usar dados locais.')
+          setSheetStatus('Nenhum evento encontrado na Google Sheet.')
         }
       })
-      .catch(() => setSheetStatus('Ligação offline com o Google Sheets. A usar dados locais de reserva.'))
+      .catch(() => {
+        setSheetStatus('Não foi possível ligar à Google Sheet. Verifique a ligação.')
+      })
   }, [])
 
-  // Processamento unificado dos dados
-  const allEvents = useMemo(() => getPreparedEvents(rawEvents), [rawEvents])
-  const activeEvents = useMemo(() => allEvents.filter((e) => !e.isArchived), [allEvents])
-  const archivedEvents = useMemo(() => allEvents.filter((e) => e.isArchived), [allEvents])
+  const preparedEvents = useMemo(() => getPreparedEvents(rawEvents), [rawEvents])
+  const activeEvents = preparedEvents.filter((event) => !event.isArchived)
+  const archivedEvents = preparedEvents.filter((event) => event.isArchived)
 
-  // EXTRACTORES DINÂMICOS (O núcleo do CMS - Lê a folha e constrói as opções)
-  const dynamicCategories = useMemo(() => {
-    const unique = new Set(allEvents.map((e) => e.category?.trim()).filter(Boolean))
-    return [...unique].sort()
-  }, [allEvents])
+  const categories = useMemo(() => {
+    const unique = new Set(preparedEvents.map((e) => e.category))
+    return Array.from(unique).sort()
+  }, [preparedEvents])
 
-  const dynamicTypes = useMemo(() => {
-    const unique = new Set(allEvents.map((e) => e.type?.trim()).filter(Boolean))
-    return [...unique].sort()
-  }, [allEvents])
+  const [query, setQuery] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('Todas')
+  const [formatFilter, setFormatFilter] = useState('Todos')
+  const [onlyFree, setOnlyFree] = useState(false)
+  const [showArchive, setShowArchive] = useState(false)
+  const [categorySearch, setCategorySearch] = useState('')
 
-  const featuredEvents = useMemo(() => {
-    // Procura eventos marcados com 'Sim' na coluna destaque; se não houver, mostra os 4 mais recentes ativos
-    const marked = activeEvents.filter((e) => normalizeText(e.featured) === 'sim')
-    return marked.length > 0 ? marked.slice(0, 4) : activeEvents.slice(0, 4)
-  }, [activeEvents])
-
-  // Lógica de filtragem reativa
-  const currentSource = showArchive ? archivedEvents : activeEvents
-  const filteredEvents = currentSource.filter((event) => {
-    const searchString = normalizeText(`${event.title} ${event.organizer} ${event.category} ${event.description} ${event.type} ${event.region}`)
-    const matchesSearch = searchString.includes(normalizeText(query))
+  const sourceEvents = showArchive ? archivedEvents : activeEvents
+  const filteredEvents = sourceEvents.filter((event) => {
+    const haystack = normalizeText(`${event.title} ${event.organizer} ${event.category} ${event.description} ${event.type} ${event.region}`)
+    const matchesSearch = haystack.includes(normalizeText(query))
     const matchesCategory = selectedCategory === 'Todas' || event.category === selectedCategory
-    const matchesType = selectedType === 'Todos' || event.type === selectedType
+    const normalizedType = normalizeText(`${event.type} ${event.region}`)
+    const matchesFormat = formatFilter === 'Todos' || normalizedType.includes(normalizeText(formatFilter))
     const matchesFree = !onlyFree || event.isFree
-    return matchesSearch && matchesCategory && matchesType && matchesFree
+    return matchesSearch && matchesCategory && matchesFormat && matchesFree
   })
 
-  const visibleCategories = dynamicCategories.filter((cat) => normalizeText(cat).includes(normalizeText(categorySearch)))
+  const freeCount = activeEvents.filter((event) => event.isFree).length
+  const thisMonthCount = activeEvents.filter((event) => {
+    const now = new Date()
+    return event.startDate.getMonth() === now.getMonth() && event.startDate.getFullYear() === now.getFullYear()
+  }).length
+
+  const featuredEvents = activeEvents.slice(0, 4)
+  const visibleCategories = categories.filter((category) => normalizeText(category).includes(normalizeText(categorySearch)))
+
+  function openCategory(category) {
+    setSelectedCategory(category)
+    setShowArchive(false)
+    setTimeout(() => document.getElementById('events')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0)
+  }
 
   return (
     <div className="page">
@@ -406,137 +490,147 @@ function App() {
             <div className="brand-icon"><Microscope size={22} /></div>
             <div>
               <p className="brand-title">MedLab Calendar</p>
-              <p className="brand-subtitle">Dynamic Laboratory Hub</p>
+              <p className="brand-subtitle">Laboratory Medicine Education Hub</p>
             </div>
           </div>
           <nav className="nav-links">
+            <a href="#about">Sobre</a>
             <a href="#calendar">Calendário</a>
-            <a href="#events">Formações</a>
-            <a href="#categories">Áreas Administrativas</a>
+            <a href="#events">Eventos</a>
+            <a href="#categories">Categorias</a>
+            <a href="#organizers">Para Organizadores</a>
           </nav>
-          <a href="#events"><Button>Ver Tudo</Button></a>
+          <a href="#events"><Button>Ver eventos</Button></a>
         </div>
       </header>
 
       <main>
-        <div className="container"><p className="small" style={{ marginTop: '1rem', color: '#0284c7' }}>● {sheetStatus}</p></div>
-        
+        <div className="container"><p className="small" style={{ marginTop: '1rem' }}>{sheetStatus}</p></div>
         <section className="container hero">
           <div>
-            <div className="pill"><CalendarDays size={16} /> Gestão Automatizada via Google Sheets</div>
-            <h1>Plataforma de Formação Laboratorial Conectada</h1>
-            <p className="lead">Um ecossistema modular onde o código é estático e a administração é livre. Altere qualquer dado na sua folha de cálculo e veja as atualizações instantaneamente.</p>
-            
-            <div className="stats-row">
-              <span>{activeEvents.length} Ativos</span>
-              <span>{activeEvents.filter(e => e.isFree).length} Gratuitos</span>
-              <span>{dynamicCategories.length} Áreas Criadas</span>
-              <span>{archivedEvents.length} No Arquivo</span>
+            <div className="pill"><CalendarDays size={16} /> Calendário de formação para profissionais de laboratório</div>
+            <h1>Cursos, webinars e eventos laboratoriais num só lugar.</h1>
+            <p className="lead">O MedLab Calendar reúne cursos, webinars, congressos e reuniões científicas num único local, com pesquisa, calendário mensal e arquivo automático de eventos passados.</p>
+            <div className="hero-actions">
+              <a href="#events"><Button>Explorar próximos eventos</Button></a>
+              <SuggestEventLink><Button variant="outline">Submeter evento</Button></SuggestEventLink>
+              <a href="https://1534ef9d.sibforms.com/serve/MUIFAHFh5N7BeM-dVw2LycaCbsspKR2qDeIx-bR6hWDL3C_3flMkcOYIvSZhwbQFOZkkX6WIeH4AUHaz8iRgywSR6IXV0cCHoHHbe2f0toIHQKYqkVCRKJpywPb2QCAA3D_x5pV1Pl4oJ8qdLPwya_iaMkJU5RHsgFo-D4Iizfs61iTuEvA-NhRSvcmw3BalvcZxEFA1z1AqQ4949w==" target="_blank" rel="noreferrer"><Button variant="outline">Subscrever Newsletter</Button></a>
             </div>
+            <div className="stats-row">
+              <span>{activeEvents.length} próximos eventos</span>
+              <span>{freeCount} gratuitos</span>
+              <span>{thisMonthCount} este mês</span>
+              <span>{archivedEvents.length} arquivados</span>
+            </div>
+            <p className="small">Contacto: <a className="inline-link" href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
           </div>
 
           <div className="card feature-card">
             <div className="card-header">
-              <div><p className="eyebrow">Destaques dinâmicos</p><h2>Painel de Evidência</h2></div>
-              <div className="soft-icon"><Star size={20} fill="#eab308" color="#eab308" /></div>
+              <div><p className="eyebrow">Próximos eventos</p><h2>Destaque</h2></div>
+              <div className="soft-icon"><Filter size={20} /></div>
             </div>
             <div className="event-list">
               {featuredEvents.map((event) => (
                 <div className="event-row" key={event.title}>
                   <div className="event-top">
                     <div><p className="event-title">{event.title}</p><p className="muted">{event.organizer}</p></div>
-                    <span className="tag">{event.category}</span>
+                    <span className="tag">{event.category}</span>{event.isFree && <span className="tag free-badge">Gratuito</span>}
                   </div>
-                  <div className="event-meta"><span>{event.date}</span><span>{event.type}</span><span>{event.price}</span></div>
+                  <div className="event-meta"><span>{event.date}</span><span>{event.type}</span><span>{event.region}</span><span>{event.price}</span></div>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <MonthlyCalendar events={allEvents} />
-
-        <section id="events" className="white-section">
-          <div className="container">
-            <div className="section-head">
-              <div><p className="eyebrow">Filtros Inteligentes</p><h2>Explorador de Conteúdo</h2></div>
-              <Button variant="outline" onClick={() => setShowArchive(!showArchive)}>{showArchive ? 'Ver Eventos Futuros' : 'Consultar Histórico (Arquivo)'}</Button>
-            </div>
-
-            {/* PAINEL DE FILTROS TOTALMENTE AUTOMÁTICO */}
-            <div className="filters-panel">
-              <label className="search-input">
-                <Search size={18} />
-                <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Pesquise por termo, palavra-chave ou hospital..." />
-              </label>
-              
-              <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
-                <option value="Todas">Todas as Áreas</option>
-                {dynamicCategories.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
-              </select>
-
-              <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)}>
-                <option value="Todos">Todos os Formatos</option>
-                {dynamicTypes.map((t) => <option key={t} value={t}>{t}</option>)}
-              </select>
-
-              <label className="checkbox-filter">
-                <input type="checkbox" checked={onlyFree} onChange={(e) => setOnlyFree(e.target.checked)} /> 
-                Apenas Gratuitos
-              </label>
-            </div>
-
-            <div className="notice">
-              {showArchive ? 'A visualizar registos passados armazenados para fins de consulta e portefólio.' : 'A mostrar eventos ativos programados.'} Encontrámos {filteredEvents.length} resultado(s).
-            </div>
-            
-            <div className="grid-3">
-              {filteredEvents.map((event) => <EventCard event={event} key={event.title} />)}
-            </div>
+        <section id="about" className="intro-section">
+          <div className="container intro-card">
+            <div className="soft-icon"><HeartHandshake size={22} /></div>
+            <p className="eyebrow">Sobre</p>
+            <h2>Uma ferramenta criada para ajudar colegas e fortalecer a comunidade laboratorial.</h2>
+            <p>A formação em medicina laboratorial encontra-se frequentemente dispersa entre sociedades científicas, universidades, hospitals, empresas e redes profissionais. O MedLab Calendar reúne cursos, webinars, congressos e reuniões científicas num único local, facilitando o acesso a oportunidades de aprendizagem contínua.</p>
+            <p>O projeto tem uma abordagem de curadoria independente: cada evento é resumido de forma simples e encaminha para a página oficial da entidade organizadora.</p>
           </div>
         </section>
 
+        <MonthlyCalendar events={activeEvents} />
+
         <section id="categories" className="container categories-section">
           <div className="section-intro">
-            <p className="eyebrow">Indexação por Segmento</p>
-            <h2>Segmentação Automática</h2>
-            <p>Se criares uma nova Área no Google Sheets, um novo cartão com contador integrado será gerado aqui sem intervenção técnica.</p>
+            <p className="eyebrow">Categorias</p>
+            <h2>Eventos organizados por área.</h2>
+            <p>Pesquisa uma área ou clica num ícone para veres todos os cursos dessa categoria.</p>
           </div>
 
           <label className="category-search-box">
             <Search size={18} />
-            <input value={categorySearch} onChange={(e) => setCategorySearch(e.target.value)} placeholder="Procurar categoria na folha..." />
+            <input
+              value={categorySearch}
+              onChange={(event) => setCategorySearch(event.target.value)}
+              placeholder="Pesquisar área, por exemplo: Hematologia, Qualidade, Anatomia Patológica..."
+            />
           </label>
 
           <div className="category-icon-grid">
             {visibleCategories.map((category) => {
-              const totalActive = activeEvents.filter((e) => e.category === category).length
+              const matchingEvents = activeEvents.filter((event) => event.category === category)
+              const Icon = getCategoryIcon(category)
               return (
-                <button type="button" className="category-icon-card" key={category} onClick={() => {
-                  setSelectedCategory(category)
-                  setShowArchive(false)
-                  document.getElementById('events')?.scrollIntoView({ behavior: 'smooth' })
-                }}>
-                  <div className="category-icon-circle"><FlaskConical size={22} /></div>
+                <button type="button" className="category-icon-card" key={category} onClick={() => openCategory(category)}>
+                  <span className="category-icon" aria-hidden="true">
+                    <Icon size={30} />
+                  </span>
                   <strong>{category}</strong>
-                  <span>{totalActive} ativo(s)</span>
+                  <span>{matchingEvents.length} evento(s)</span>
                 </button>
               )
             })}
           </div>
         </section>
 
-        <section className="container organizers-section">
+        <section id="events" className="white-section">
+          <div className="container">
+            <div className="section-head">
+              <div><p className="eyebrow">Eventos e formações</p><h2>Descobre formação relevante sem perder tempo à procura.</h2></div>
+              <Button variant="outline" onClick={() => setShowArchive(!showArchive)}>{showArchive ? 'Ver eventos ativos' : 'Ver arquivo'}</Button>
+            </div>
+
+            <div className="filters-panel">
+              <label className="search-input"><Search size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Pesquisar por tema, área, organizador ou palavra-chave" /></label>
+              <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)}>
+                <option>Todas</option>
+                {categories.map((category) => <option key={category}>{category}</option>)}
+              </select>
+              <select value={formatFilter} onChange={(event) => setFormatFilter(event.target.value)}>
+                <option>Todos</option>
+                <option>Online</option>
+                <option>Presencial</option>
+                <option>Webinar</option>
+                <option>Curso</option>
+                <option>Congresso</option>
+              </select>
+              <label className="checkbox-filter"><input type="checkbox" checked={onlyFree} onChange={(event) => setOnlyFree(event.target.checked)} /> Mostrar apenas gratuitos</label>
+            </div>
+
+            <div className="notice">{showArchive ? 'Arquivo de eventos passados, preservado para consulta histórica.' : 'São apresentados eventos e formações ainda por realizar ou atualmente disponíveis.'} Resultado: {filteredEvents.length} evento(s).</div>
+            <div className="grid-3">{filteredEvents.map((event) => <EventCard event={event} key={event.title} />)}</div>
+          </div>
+        </section>
+
+        <section id="organizers" className="container organizers-section">
           <div className="organizers-card">
             <div>
               <div className="soft-icon"><ClipboardList size={22} /></div>
-              <p className="eyebrow">Administração</p>
-              <h2>Como funciona o seu Painel de Controlo?</h2>
-              <p>O seu site consome a exportação direta em formato CSV da folha de cálculo pública do Google Sheets. Mude as colunas, insira linhas ou altere as restrições de visibilidade diretamente na nuvem.</p>
+              <p className="eyebrow">Para Organizadores</p>
+              <h2>Divulgue cursos, webinars e reuniões científicas relevantes.</h2>
+              <p>O MedLab Calendar aceita sugestões de eventos de sociedades científicas, universidades, hospitais, laboratórios, empresas e outras entidades com formação relevante para a medicina laboratorial.</p>
             </div>
             <div className="organizers-copy">
-              <p><strong>Campos detetados na estrutura:</strong> Título, Data, Categoria, Formato/Tipo, Organizador, Link Oficial, Custo, Certificado, Região e Destaque.</p>
-              <a href={googleFormUrl} target="_blank" rel="noreferrer"><Button>Aceder Formulário de Submissão</Button></a>
+              <p><strong>Informação recomendada:</strong> título, data, organizador, área, formato, local, custo, certificado e link oficial.</p>
+              <p><strong>Email:</strong> <a className="inline-link" href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
+              <p><strong>Importante:</strong> a plataforma atua apenas como serviço de curadoria e divulgação. Os eventos pertencem às respetivas entidades organizadoras.</p>
+              <SuggestEventLink><Button>Submeter evento</Button></SuggestEventLink>
             </div>
           </div>
         </section>
@@ -544,8 +638,11 @@ function App() {
 
       <footer className="footer">
         <div className="container footer-content">
-          <p>© 2026 MedLab Calendar. Arquitetura CMS Dinâmica.</p>
-          <p>Contacto Técnico: <a className="inline-link" href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
+          <div>
+            <p>© 2026 MedLab Calendar. Curadoria independente de formação laboratorial.</p>
+            <p>Os eventos apresentados são da responsabilidade das entidades organizadoras. O MedLab Calendar atua apenas como plataforma de divulgação.</p>
+          </div>
+          <p>Contacto: <a className="inline-link" href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
         </div>
       </footer>
     </div>
