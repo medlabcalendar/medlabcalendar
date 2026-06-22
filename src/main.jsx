@@ -215,7 +215,7 @@ function isCalendarEventOnDay(event, day) {
     event.startDate.getFullYear() === day.getFullYear() &&
     event.startDate.getMonth() === day.getMonth() &&
     event.startDate.getDate() === day.getDate()
-  );
+  )
 }
 
 function isFreeEvent(event) {
@@ -414,7 +414,6 @@ function getCategoryIcon(category) {
 }
 
 function App() {
-  // AJUSTADO: Começa vazio por defeito até a Google Sheet carregar
   const [rawEvents, setRawEvents] = useState([])
   const [sheetStatus, setSheetStatus] = useState('A carregar eventos da Google Sheet...')
 
@@ -427,7 +426,6 @@ function App() {
       .then((text) => {
         const sheetEvents = parseCSV(text)
         if (sheetEvents.length > 0) {
-          // MODIFICADO: Apenas assume os eventos vindos diretamente da Google Sheet
           setRawEvents(sheetEvents)
           setSheetStatus(`Eventos carregados da Google Sheet: ${sheetEvents.length}`)
         } else {
@@ -623,6 +621,7 @@ function App() {
             <div>
               <div className="soft-icon"><ClipboardList size={22} /></div>
               <p className="eyebrow">Para Organizadores</p>
+              {/* REPOSTO: Título exato original */}
               <h2>Divulgue cursos, webinars e reuniões científicas relevantes.</h2>
               <p>O MedLab Calendar aceita sugestões de eventos de sociedades científicas, universidades, hospitais, laboratórios, empresas e outras entidades com formação relevante para a medicina laboratorial.</p>
             </div>
@@ -639,6 +638,7 @@ function App() {
       <footer className="footer">
         <div className="container footer-content">
           <div>
+            {/* REPOSTO: Frase exata original */}
             <p>© 2026 MedLab Calendar. Curadoria independente de formação laboratorial.</p>
             <p>Os eventos apresentados são da responsabilidade das entidades organizadoras. O MedLab Calendar atua apenas como plataforma de divulgação.</p>
           </div>
