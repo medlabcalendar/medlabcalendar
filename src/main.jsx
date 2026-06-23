@@ -38,7 +38,7 @@ const fallbackEvents = [
 ]
 
 const CATEGORIES = {
-  'Todos': { icon: Filter, color: 'var(--text-secondary)' },
+  'Todos': { icon: Filter, color: '#6b7280' },
   'Genética': { icon: Dna, color: '#6366f1' },
   'Bioquímica Clínica': { icon: Droplets, color: '#3b82f6' },
   'Hematologia': { icon: ShieldCheck, color: '#ef4444' },
@@ -110,7 +110,6 @@ function parseCSV(text) {
     const line = lines[i].trim()
     if (!line) continue
 
-    const matches = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || []
     const cells = []
     let currentCell = ''
     let inQuotes = false
@@ -153,7 +152,7 @@ function parseCSV(text) {
 
 function SuggestEventLink({ children }) {
   return (
-    <a href={googleFormUrl} target=\"_blank\" rel=\"noopener noreferrer\" className=\"action-link\">
+    <a href={googleFormUrl} target="_blank" rel="noopener noreferrer" className="action-link">
       {children}
     </a>
   )
@@ -171,7 +170,6 @@ function Button({ children, variant = 'primary', size = 'default', onClick, clas
 function App() {
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('Todos')
   const [currentPage, setCurrentPage] = useState(1)
@@ -220,19 +218,19 @@ function App() {
   }, [searchTerm, selectedCategory])
 
   return (
-    <div className=\"app-container\">
-      <header className=\"header\">
-        <div className=\"container header-content\">
-          <div className=\"logo-section\">
-            <CalendarDays className=\"logo-icon\" size={32} />
+    <div className="app-container">
+      <header className="header">
+        <div className="container header-content">
+          <div className="logo-section">
+            <CalendarDays className="logo-icon" size={32} />
             <div>
-              <h1 className=\"site-title\">MedLab Calendar</h1>
-              <p className=\"site-subtitle\">Calendário de Formações e Eventos de Medicina Laboratorial</p>
+              <h1 className="site-title">MedLab Calendar</h1>
+              <p className="site-subtitle">Calendário de Formações e Eventos de Medicina Laboratorial</p>
             </div>
           </div>
-          <div className=\"header-actions\">
+          <div className="header-actions">
             <SuggestEventLink>
-              <Button variant=\"primary\">
+              <Button variant="primary">
                 <ExternalLink size={16} style={{ marginRight: '8px' }} />
                 Sugerir Evento
               </Button>
@@ -241,20 +239,20 @@ function App() {
         </div>
       </header>
 
-      <main className=\"container main-content\">
-        <section className=\"search-filter-section\">
-          <div className=\"search-container\">
-            <Search className=\"search-icon\" size={20} />
+      <main className="container main-content">
+        <section className="search-filter-section">
+          <div className="search-container">
+            <Search className="search-icon" size={20} />
             <input
-              type=\"text\"
-              placeholder=\"Pesquisar por título, organizador, palavra-chave...\"
-              className=\"search-input\"
+              type="text"
+              placeholder="Pesquisar por título, organizador, palavra-chave..."
+              className="search-input"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
 
-          <div className=\"categories-grid\">
+          <div className="categories-grid">
             {Object.entries(CATEGORIES).map(([name, config]) => {
               const IconComponent = config.icon
               const isSelected = selectedCategory === name
@@ -263,7 +261,7 @@ function App() {
                   key={name}
                   onClick={() => setSelectedCategory(name)}
                   className={`category-tag ${isSelected ? 'active' : ''}`}
-                  style={{ '--tag-color': config.color }}
+                  style={{ borderColor: config.color, color: isSelected ? '#fff' : config.color }}
                 >
                   <IconComponent size={16} />
                   <span>{name}</span>
@@ -273,47 +271,47 @@ function App() {
           </div>
         </section>
 
-        <section className=\"events-section\">
-          <div className=\"section-header\">
-            <h2 className=\"section-title\">
+        <section className="events-section">
+          <div className="section-header">
+            <h2 className="section-title">
               {selectedCategory === 'Todos' ? 'Todos os Eventos' : `Eventos de ${selectedCategory}`}
-              <span className=\"count-badge\">{filteredEvents.length}</span>
+              <span className="count-badge">{filteredEvents.length}</span>
             </h2>
           </div>
 
           {loading ? (
-            <div className=\"loading-state\">A carregar eventos...</div>
+            <div className="loading-state">A carregar eventos...</div>
           ) : currentEvents.length === 0 ? (
-            <div className=\"empty-state\">
+            <div className="empty-state">
               <p>Nenhum evento encontrado para os critérios selecionados.</p>
             </div>
           ) : (
             <>
-              <div className=\"events-grid\">
+              <div className="events-grid">
                 {currentEvents.map((event, index) => {
                   const catConfig = CATEGORIES[event.category] || CATEGORIES['Medicina Laboratorial']
                   const CatIcon = catConfig.icon
 
                   return (
-                    <article key={index} className=\"event-card\">
-                      <div className=\"card-header\">
-                        <span className=\"card-category\" style={{ backgroundColor: `${catConfig.color}15`, color: catConfig.color }}>
+                    <article key={index} className="event-card">
+                      <div className="card-header">
+                        <span className="card-category" style={{ color: catConfig.color, border: `1px solid ${catConfig.color}` }}>
                           <CatIcon size={14} style={{ marginRight: '4px' }} />
                           {event.category}
                         </span>
-                        <span className=\"card-date\">{event.date}</span>
+                        <span className="card-date">{event.date}</span>
                       </div>
-                      <h3 className=\"card-title\">{event.title}</h3>
-                      <p className=\"card-organizer\"><strong>Organizador:</strong> {event.organizer}</p>
-                      <div className=\"card-details-grid\">
+                      <h3 className="card-title">{event.title}</h3>
+                      <p className="card-organizer"><strong>Organizador:</strong> {event.organizer}</p>
+                      <div className="card-details-grid">
                         <div><strong>Formato:</strong> {event.format}</div>
                         <div><strong>Local:</strong> {event.location}</div>
                         <div><strong>Custo:</strong> {event.cost}</div>
                         <div><strong>Certificado:</strong> {event.certificate}</div>
                       </div>
                       {event.link && (
-                        <div className=\"card-actions\">
-                          <a href={event.link} target=\"_blank\" rel=\"noopener noreferrer\" className=\"visit-button\">
+                        <div className="card-actions">
+                          <a href={event.link} target="_blank" rel="noopener noreferrer" className="visit-button">
                             Ver página do evento <ExternalLink size={14} style={{ marginLeft: '4px' }} />
                           </a>
                         </div>
@@ -324,21 +322,21 @@ function App() {
               </div>
 
               {totalPages > 1 && (
-                <div className=\"pagination\">
+                <div className="pagination">
                   <button
                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                     disabled={currentPage === 1}
-                    className=\"pagination-button\"
+                    className="pagination-button"
                   >
                     <ChevronLeft size={20} />
                   </button>
-                  <span className=\"pagination-info\">
+                  <span className="pagination-info">
                     Página {currentPage} de {totalPages}
                   </span>
                   <button
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages}
-                    className=\"pagination-button\"
+                    className="pagination-button"
                   >
                     <ChevronRight size={20} />
                   </button>
@@ -348,15 +346,15 @@ function App() {
           )}
         </section>
 
-        <section className=\"info-section\">
-          <div className=\"info-grid\">
-            <div className=\"info-copy\">
+        <section className="info-section">
+          <div className="info-grid">
+            <div className="info-copy">
               <h2>Divulgue os seus cursos e reuniões científicas relevantes.</h2>
               <p>O MedLab Calendar aceita sugestões de eventos de sociedades científicas, universidades, hospitais, laboratórios, empresas e outras entidades com formação relevante para a medicina laboratorial.</p>
             </div>
-            <div className=\"organizers-copy\">
+            <div className="organizers-copy">
               <p><strong>Informação recomendada:</strong> título, data, organizador, área, formato, local, custo, certificado e link oficial.</p>
-              <p><strong>Email:</strong> <a className=\"inline-link\" href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
+              <p><strong>Email:</strong> <a className="inline-link" href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
               <p><strong>Importante:</strong> a plataforma atua apenas como serviço de curadoria e divulgação. Os eventos pertencem às respetivas entidades organizadoras.</p>
               <SuggestEventLink><Button>Submeter evento</Button></SuggestEventLink>
             </div>
@@ -364,13 +362,13 @@ function App() {
         </section>
       </main>
 
-      <footer className=\"footer\">
-        <div className=\"container footer-content\">
+      <footer className="footer">
+        <div className="container footer-content">
           <div>
             <p>© 2026 MedLab Calendar. Curadoria independente de formação laboratorial.</p>
             <p>Os eventos apresentados são da responsabilidade das entidades organizadoras. O MedLab Calendar atua apenas como plataforma de divulgação.</p>
           </div>
-          <p>Contacto: <a className=\"inline-link\" href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
+          <p>Contacto: <a className="inline-link" href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
         </div>
       </footer>
     </div>
