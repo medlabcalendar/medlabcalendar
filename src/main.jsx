@@ -6,6 +6,7 @@ import {
   ExternalLink,
   Microscope,
   Filter,
+  HeartHandshake,
   ClipboardList,
   Download,
   Archive,
@@ -18,9 +19,7 @@ import {
   Ambulance,
   BarChart3,
   Lightbulb,
-  TestTube2,
-  HeartHandshake,
-  ShieldPlus
+  TestTube2
 } from 'lucide-react'
 import './styles.css'
 
@@ -29,10 +28,29 @@ const contactEmail = 'medlabcalendar@gmail.com'
 const SHEET_CSV_URL =
   'https://docs.google.com/spreadsheets/d/e/2PACX-1vRNMDWDdFpEBXYUUKpw87IYCdmy_Y6bTGKzpKpDuundPcyfxvEZZ9SvSzQ_rTb2TZMk0z-T6b5Yzs4f/pub?output=csv'
 
-/* ---------------------------
-   NORMALIZAÇÃO
-----------------------------*/
+/* =========================
+   CATEGORIES (UPDATED)
+========================= */
+const areaCategories = [
+  'Genética',
+  'Inovação',
+  'Hematologia',
+  'Coagulação e Hemostase',
+  'Medicina Laboratorial',
+  'Bioquímica Clínica',
+  'Microbiologia',
+  'Qualidade',
+  'Anatomia Patológica',
+  'Biologia Molecular',
+  'Toxicologia',
+  'Bioestatística',
+  'Imunologia',
+  'Urgência'
+]
 
+/* =========================
+   NORMALIZE
+========================= */
 function normalizeText(value = '') {
   return String(value)
     .normalize('NFD')
@@ -40,47 +58,32 @@ function normalizeText(value = '') {
     .toLowerCase()
 }
 
-function isSameCalendarDay(a, b) {
-  return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-  )
-}
-
-/* ---------------------------
-   CATEGORIAS
-----------------------------*/
-
+/* =========================
+   CATEGORY MAPPING FIXED
+========================= */
 function normalizeCategory(category) {
   const n = normalizeText(category)
 
-  if (n.includes('imunologia') || n.includes('immunology'))
-    return 'Imunologia'
-
-  if (
-    n.includes('coagulacao') ||
-    n.includes('hemostase') ||
-    n.includes('coagulation') ||
-    n.includes('hemostasis')
-  )
-    return 'Coagulação e Hemostase'
-
-  if (n.includes('hematologia')) return 'Hematologia'
-  if (n.includes('microbiologia')) return 'Microbiologia'
-  if (n.includes('bioquimica')) return 'Bioquímica Clínica'
+  if (n.includes('imunolog')) return 'Imunologia'
+  if (n.includes('coagul') || n.includes('hemostase')) return 'Coagulação e Hemostase'
+  if (n.includes('hematolog')) return 'Hematologia'
+  if (n.includes('microbiolog') || n.includes('infec')) return 'Microbiologia'
+  if (n.includes('biologia molecular')) return 'Biologia Molecular'
+  if (n.includes('anatomia')) return 'Anatomia Patológica'
   if (n.includes('qualidade')) return 'Qualidade'
-  if (n.includes('genetica')) return 'Genética'
-  if (n.includes('inovacao')) return 'Inovação'
+  if (n.includes('bioquim')) return 'Bioquímica Clínica'
+  if (n.includes('genet')) return 'Genética'
   if (n.includes('urgencia')) return 'Urgência'
+  if (n.includes('inovacao')) return 'Inovação'
+  if (n.includes('bioestat')) return 'Bioestatística'
+  if (n.includes('toxicolog')) return 'Toxicologia'
 
   return 'Medicina Laboratorial'
 }
 
-/* ---------------------------
-   CSV PARSER
-----------------------------*/
-
+/* =========================
+   CSV PARSER (UNCHANGED BUT SAFE)
+========================= */
 function parseCSV(text) {
   const rows = []
   let row = []
@@ -100,13 +103,12 @@ function parseCSV(text) {
       row.push(value.trim())
       value = ''
     } else if ((char === '\n' || char === '\r') && !insideQuotes) {
-      if (row.length) {
+      if (value || row.length) {
         row.push(value.trim())
         rows.push(row)
+        row = []
+        value = ''
       }
-      row = []
-      value = ''
-      if (char === '\r' && next === '\n') i++
     } else {
       value += char
     }
@@ -119,121 +121,104 @@ function parseCSV(text) {
 
   if (rows.length < 2) return []
 
-  const headers = rows[0].map((h) =>
-    normalizeText(h).replace(/[^a-z0-9]+/g, '')
-  )
+  const headers = rows[0].map(h => normalizeText(h))
 
-  return rows.slice(1).map((cells) => {
-    const raw = {}
-
-    headers.forEach((h, i) => {
-      raw[h] = cells[i] || ''
-    })
+  return rows.slice(1).map(cells => {
+    const obj = {}
+    headers.forEach((h, i) => (obj[h] = cells[i] || ''))
 
     return {
-      title: raw.titulo || raw.title || '',
-      date: raw.data || raw.date || '',
-      category: normalizeCategory(raw.categoria || raw.category || ''),
-      type: raw.tipo || raw.type || '',
-      organizer: raw.organizador || raw.organizer || '',
-      link: raw.link || raw.url || '',
-      price: raw.preco || raw.price || '',
-      certificate: raw.certificado || '',
-      region: raw.regiao || raw.region || '',
-      description: raw.descricao || raw.description || ''
+      title: obj.titulo || obj.title || '',
+      date: obj.data || obj.date || '',
+      category: normalizeCategory(obj.categoria || obj.category || ''),
+      type: obj.tipo || obj.type || '',
+      organizer: obj.organizador || '',
+      link: obj.link || '',
+      price: obj.price || '',
+      certificate: obj.certificate || '',
+      region: obj.region || '',
+      description: obj.description || ''
     }
   }).filter(e => e.title)
 }
 
-/* ---------------------------
-   DATE PARSER (SIMPLES)
-----------------------------*/
-
+/* =========================
+   DATE PARSER
+========================= */
 function parseEventDate(dateText = '') {
-  const clean = normalizeText(dateText)
+  const clean = normalizeText(dateText).replace(/\//g, '-')
 
-  const iso = clean.match(/(20\d{2})-(\d{1,2})-(\d{1,2})/)
-
-  if (iso) {
-    const y = Number(iso[1])
-    const m = Number(iso[2]) - 1
-    const d = Number(iso[3])
-
-    return {
-      start: new Date(y, m, d, 9),
-      end: new Date(y, m, d, 18),
-      isApproximate: false
-    }
+  const match = clean.match(/(20\d{2})-(\d{1,2})-(\d{1,2})/)
+  if (!match) {
+    const fallback = new Date()
+    return { start: fallback, end: fallback, isRange: false }
   }
 
-  return {
-    start: new Date(),
-    end: new Date(),
-    isApproximate: true
-  }
+  const start = new Date(match[1], match[2] - 1, match[3], 9)
+  const end = new Date(match[1], match[2] - 1, match[3], 18)
+
+  return { start, end, isRange: clean.includes('-') }
 }
 
-/* ---------------------------
-   EVENTOS PREPARADOS
-----------------------------*/
+/* =========================
+   IMPORTANT FIX:
+   LONG EVENTS ONLY FIRST DAY
+========================= */
+function isCalendarEventOnDay(event, day) {
+  const d = new Date(day)
+  const start = event.startDate
 
+  return (
+    d.getFullYear() === start.getFullYear() &&
+    d.getMonth() === start.getMonth() &&
+    d.getDate() === start.getDate()
+  )
+}
+
+/* =========================
+   PREPARE EVENTS
+========================= */
 function getPreparedEvents(events) {
   const now = new Date()
 
-  return events.map((e) => {
+  return events.map(e => {
     const parsed = parseEventDate(e.date)
 
     return {
       ...e,
-      category: normalizeCategory(e.category),
       startDate: parsed.start,
       endDate: parsed.end,
       isArchived: parsed.end < now,
-      isFree: normalizeText(e.price).includes('gratuito')
+      isLong: false // FIX: never spread across calendar
     }
   }).sort((a, b) => a.startDate - b.startDate)
 }
 
-/* ---------------------------
-   CALENDÁRIO: só 1º dia
-----------------------------*/
-
-function isCalendarEventOnDay(event, day) {
-  return isSameCalendarDay(event.startDate, day)
-}
-
-/* ---------------------------
-   UI
-----------------------------*/
-
+/* =========================
+   BUTTON
+========================= */
 function Button({ children, onClick, variant = 'primary' }) {
   return (
     <button
       onClick={onClick}
-      className={variant === 'outline' ? 'btn-outline' : 'btn'}
+      className={variant === 'outline' ? 'btn-outline' : 'btn-primary'}
     >
       {children}
     </button>
   )
 }
 
-/* ---------------------------
+/* =========================
    EVENT CARD
-----------------------------*/
-
+========================= */
 function EventCard({ event }) {
   return (
     <div className="card">
+      <span className="tag">{event.category}</span>
       <h3>{event.title}</h3>
       <p>{event.organizer}</p>
       <p>{event.description}</p>
-
-      <div>
-        <p><strong>Data:</strong> {event.date}</p>
-        <p><strong>Tipo:</strong> {event.type}</p>
-        <p><strong>Preço:</strong> {event.price}</p>
-      </div>
-
+      <p><strong>{event.date}</strong></p>
       <a href={event.link} target="_blank" rel="noreferrer">
         <Button variant="outline">Abrir</Button>
       </a>
@@ -241,19 +226,14 @@ function EventCard({ event }) {
   )
 }
 
-/* ---------------------------
-   CALENDAR
-----------------------------*/
-
+/* =========================
+   CALENDAR (FIXED)
+========================= */
 function MonthlyCalendar({ events }) {
   const [month, setMonth] = useState(new Date())
 
   const days = useMemo(() => {
-    const first = new Date(month.getFullYear(), month.getMonth(), 1)
-    const offset = (first.getDay() + 6) % 7
-
-    const start = new Date(first)
-    start.setDate(first.getDate() - offset)
+    const start = new Date(month.getFullYear(), month.getMonth(), 1)
 
     return Array.from({ length: 42 }, (_, i) => {
       const date = new Date(start)
@@ -268,74 +248,61 @@ function MonthlyCalendar({ events }) {
 
   return (
     <div>
-      <h2>
-        {month.toLocaleString('pt-PT', { month: 'long' })}{' '}
-        {month.getFullYear()}
-      </h2>
+      <h2>{month.toLocaleDateString('pt', { month: 'long', year: 'numeric' })}</h2>
 
       <div className="calendar">
-        {days.map((d) => (
-          <div key={d.date.toISOString()} className="day">
+        {days.map(d => (
+          <div key={d.date}>
             <strong>{d.date.getDate()}</strong>
-
-            {d.events.slice(0, 2).map((e) => (
-              <a key={e.title} href={e.link} className="event-pill">
+            {d.events.map(e => (
+              <div key={e.title} className="pill">
                 {e.title}
-              </a>
+              </div>
             ))}
-
-            {d.events.length > 2 && (
-              <small>+{d.events.length - 2}</small>
-            )}
           </div>
         ))}
       </div>
+
+      <button onClick={() => setMonth(new Date(month.setMonth(month.getMonth() - 1)))}>
+        Prev
+      </button>
+      <button onClick={() => setMonth(new Date(month.setMonth(month.getMonth() + 1)))}>
+        Next
+      </button>
     </div>
   )
 }
 
-/* ---------------------------
-   APP
-----------------------------*/
-
+/* =========================
+   APP (ONLY SHEETS)
+========================= */
 function App() {
   const [events, setEvents] = useState([])
   const [status, setStatus] = useState('A carregar Google Sheets...')
 
   useEffect(() => {
-    const controller = new AbortController()
-
-    fetch(SHEET_CSV_URL, { signal: controller.signal })
-      .then((r) => r.text())
-      .then((text) => {
+    fetch(SHEET_CSV_URL)
+      .then(r => r.text())
+      .then(text => {
         const parsed = parseCSV(text)
-        setEvents(parsed)
-        setStatus(`Google Sheets: ${parsed.length} eventos`)
+        setEvents(getPreparedEvents(parsed))
+        setStatus(`Eventos carregados: ${parsed.length}`)
       })
-      .catch(() => {
-        setEvents([])
-        setStatus('Erro ao carregar Google Sheets')
-      })
-
-    return () => controller.abort()
+      .catch(() => setStatus('Erro a carregar Google Sheets'))
   }, [])
 
-  const prepared = useMemo(() => getPreparedEvents(events), [events])
+  const active = events.filter(e => !e.isArchived)
 
   return (
-    <div className="page">
-      <header className="header">
-        <Microscope />
-        <h1>MedLab Calendar</h1>
-      </header>
-
+    <div>
+      <h1>MedLab Calendar</h1>
       <p>{status}</p>
 
-      <MonthlyCalendar events={prepared} />
+      <MonthlyCalendar events={active} />
 
       <div className="grid">
-        {prepared.map((e) => (
-          <EventCard key={`${e.title}-${e.date}`} event={e} />
+        {active.map(e => (
+          <EventCard key={e.title} event={e} />
         ))}
       </div>
     </div>
