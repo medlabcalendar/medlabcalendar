@@ -517,7 +517,7 @@ function App() {
         <div className="container"><p className="small" style={{ marginTop: '1rem' }}>{sheetStatus}</p></div>
         <section className="container hero">
           <div>
-            <div className="pill"><CalendarDays size={16} /> Calendário de formação para professionals de laboratório</div>
+            <div className="pill"><CalendarDays size={16} /> Calendário de formação para profissionais de laboratório</div>
             <h1>Cursos, webinars e eventos laboratoriais num só lugar.</h1>
             <p className="lead">O MedLab Calendar reúne cursos, webinars, congressos e reuniões científicas num único local, com pesquisa, calendário mensal e arquivo automático de eventos passados.</p>
             <div className="hero-actions">
@@ -613,7 +613,8 @@ function App() {
 
           <div className="category-icon-grid">
             {visibleCategories.map((category) => {
-              const matchingEvents = activeEvents.filter((event) => event.category === category)
+              // CORREÇÃO ESSENCIAL: Conta todos os eventos da tabela que correspondem à categoria, ativos ou não
+              const matchingEvents = preparedEvents.filter((event) => event.category === category)
               const Icon = getCategoryIcon(category)
               return (
                 <button type="button" className="category-icon-card" key={category} onClick={() => openCategory(category)}>
