@@ -42,6 +42,7 @@ function normalizeText(value = '') {
   return String(value)
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
+    .trim()
     .toLowerCase()
 }
 
@@ -84,6 +85,12 @@ function normalizeCategory(category) {
   if (normalized.includes('imunolog') || normalized.includes('imuno')) return 'Imunologia'
   if (normalized.includes('medicina laboratorial')) return 'Medicina Laboratorial'
   if (normalized.includes('inovacao') || normalized.includes('inteligencia artificial')) return 'Inovação'
+
+  for (const official of areaCategories) {
+    if (normalizeText(official) === normalized) {
+      return official
+    }
+  }
 
   return 'Medicina Laboratorial'
 }
@@ -140,7 +147,8 @@ function parseCSV(text) {
       date: raw.data || raw.date || raw.startdate || raw.datainicio || '',
       startDateRaw: raw.startdate || raw.datainicio || '',
       endDateRaw: raw.enddate || raw.datafim || '',
-      category: normalizeCategory(raw.categoria || raw.category || raw.area || ''),
+      // ATENÇÃO AQUI: Adicionado suporte para 'areacategoria' gerado por "Área/Categoria"
+      category: normalizeCategory(raw.areacategoria || raw.categoria || raw.category || raw.area || raw.areas || ''),
       type: raw.tipoformato || raw.formato || raw.type || raw.tipo || '',
       organizer: raw.organizador || raw.organizer || '',
       link: raw.linkoficial || raw.link || raw.url || '',
@@ -468,7 +476,7 @@ function App() {
   const filteredEvents = sourceEvents.filter((event) => {
     const haystack = normalizeText(`${event.title} ${event.organizer} ${event.category} ${event.description} ${event.type} ${event.region}`)
     const matchesSearch = haystack.includes(normalizeText(query))
-    const matchesCategory = selectedCategory === 'Todas' || event.category === selectedCategory
+    const matchesCategory = selectedCategory === 'Todas' || normalizeText(event.category) === normalizeText(selectedCategory)
     const normalizedType = normalizeText(`${event.type} ${event.region}`)
     const matchesFormat = formatFilter === 'Todos' || normalizedType.includes(normalizeText(formatFilter))
     const matchesFree = !onlyFree || event.isFree
@@ -613,8 +621,7 @@ function App() {
 
           <div className="category-icon-grid">
             {visibleCategories.map((category) => {
-              // CORREÇÃO ESSENCIAL: Conta todos os eventos da tabela que correspondem à categoria, ativos ou não
-              const matchingEvents = preparedEvents.filter((event) => event.category === category)
+              const matchingEvents = preparedEvents.filter((event) => normalizeText(event.category) === normalizeText(category))
               const Icon = getCategoryIcon(category)
               return (
                 <button type="button" className="category-icon-card" key={category} onClick={() => openCategory(category)}>
