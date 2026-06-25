@@ -143,7 +143,7 @@ function parseCSV(text) {
     const activeValue = normalizeText(raw.ativo || raw.ativo_ || raw.status || '')
     const isActive = !activeValue || ['sim', 'yes', 'published', 'publicado', 'ativo'].some((word) => activeValue.includes(word))
 
-    // Identifica se a inscrição está quase a fechar (Urgente) via palavra-chave ou coluna dedicada
+    // Identificação de Urgência por palavras-chave ou coluna dedicada
     const custoTexto = normalizeText(raw.custo || raw.price || raw.preco || '')
     const isUrgenteManual = normalizeText(raw.urgente || raw.destaqueurgente || '').includes('sim')
     const hasUrgenciaKeyword = custoTexto.includes('urgente') || custoTexto.includes('limite') || custoTexto.includes('fechar')
@@ -199,4 +199,139 @@ function parseEventDate(dateText = '') {
   if (clean.includes('ultima segunda-feira') || clean.includes('cada mes')) {
     return {
       start: new Date(startYear, 0, 1, 9, 0, 0),
-      end: new Date(Math.max(
+      end: new Date(Math.max(endYear, startYear + 1), 11, 31, 18, 0, 0),
+      isApproximate: true,
+    }
+  }
+
+  if (clean.includes('periodo letivo')) {
+    return {
+      start: new Date(startYear, 0, 1, 9, 0, 0),
+      end: new Date(endYear, 11, 31, 18, 0, 0),
+      isApproximate: true,
+    }
+  }
+
+  if (clean.includes('a confirmar')) {
+    return {
+      start: new Date(startYear, 11, 31, 9, 0, 0),
+      end: new Date(startYear, 11, 31, 18, 0, 0),
+      isApproximate: true,
+    }
+  }
+
+  if (clean.includes('ao longo')) {
+    return {
+      start: new Date(startYear, 0, 1, 9, 0, 0),
+      end: new Date(startYear, 11, 31, 18, 0, 0),
+      isApproximate: true,
+    }
+  }
+
+  const startMonth = monthMatches[0] ? monthMap[monthMatches[0]] : 0
+  const endMonth = monthMatches[1] ? monthMap[monthMatches[1]] : startMonth
+  const hasExplicitDay = dayMatches.length > 0
+  const startDay = hasExplicitDay ? dayMatches[0] : 1
+  const endDay = dayMatches.length > 1 ? dayMatches[1] : startDay
+  const lastDayOfEndMonth = new Date(endYear, endMonth + 1, 0).getDate()
+
+  return {
+    start: new Date(startYear, startMonth, startDay, 9, 0, 0),
+    end: new Date(endYear, endMonth, hasExplicitDay ? endDay : lastDayOfEndMonth, 18, 0, 0),
+    isApproximate: !hasExplicitDay,
+  }
+}
+
+function isCalendarEventOnDay(event, day) {
+  const d = new Date(day)
+  const start = event.startDate
+  return (
+    d.getFullYear() === start.getFullYear() &&
+    d.getMonth() === start.getMonth() &&
+    d.getDate() === start.getDate()
+  )
+}
+
+function isFreeEvent(event) {
+  const text = normalizeText(`${event.price || ''} ${event.type || ''} ${event.title || ''} ${event.description || ''}`)
+  return text.includes('gratuito') || text.includes('gratis') || text.includes('free')
+}
+
+function formatGoogleDate(date) {
+  const pad = (value) => String(value).padStart(2, '0')
+  return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}00`
+}
+
+// Corrigido o envio de dados corretos do evento para a URL do calendário
+function getGoogleCalendarUrl(event) {
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: event.title || 'Evento MedLab Calendar',
+    dates: `${formatGoogleDate(event.startDate)}/${formatGoogleDate(event.endDate)}`,
+    details: `${event.description || ''}\n\nOrganizador: ${event.organizer || ''}\nCategoria: ${event.category || ''}\nFormato: ${event.type || ''}\nCusto: ${event.price || ''}\nCertificado: ${event.certificate || ''}\nLink oficial: ${event.link || ''}`,
+    location: event.region || event.type || 'Online',
+  })
+  return `https://calendar.google.com/calendar/render?${params.toString()}`
+}
+
+function Button({ children, variant = 'primary', className = '', onClick, type = 'button' }) {
+  return <button type={type} onClick={onClick} className={`btn ${variant === 'outline' ? 'btn-outline' : 'btn-primary'} ${className}`}>{children}</button>
+}
+
+function submissionHref() {
+  if (googleFormUrl) return googleFormUrl
+  return `mailto:${contactEmail}?subject=Sugest%C3%A3o%20de%20evento%20para%20o%20MedLab%20Calendar&body=Ol%C3%A1%2C%0A%0AGostaria%20de%20sugerir%20o%20seguinte%20evento%3A%0A%0AT%C3%ADtulo%3A%0AData%3A%0AOrganizador%3A%0A%C3%81rea%3A%0AFormato%3A%0ALink%20oficial%3A%0A%0AObrigada.`
+}
+
+function SuggestEventLink({ children }) {
+  return <a href={submissionHref()} target={googleFormUrl ? '_blank' : undefined} rel={googleFormUrl ? 'noreferrer' : undefined}>{children}</a>
+}
+
+function getPreparedEvents(eventsSource) {
+  const now = new Date()
+  return eventsSource
+    .map((event) => {
+      const normalizedEvent = { ...event, category: normalizeCategory(event.category) }
+      const parsedDate = parseEventDate(normalizedEvent.date)
+      return {
+        ...normalizedEvent,
+        startDate: parsedDate.start,
+        endDate: parsedDate.end,
+        isApproximate: parsedDate.isApproximate,
+        isArchived: parsedDate.end < now,
+        isFree: isFreeEvent(normalizedEvent),
+      }
+    })
+    .sort((a, b) => a.startDate - b.startDate)
+}
+
+function EventCard({ event }) {
+  return (
+    <div className={`card event-card ${event.isArchived ? 'archived-event' : ''} ${event.isFree ? 'free-event' : ''} ${event.isUrgente ? 'urgent-event' : ''}`}>
+      <div className="event-card-top">
+        <span className="tag">{event.category}</span>
+        {event.isFree && <span className="tag free-badge">Gratuito</span>}
+        {event.isUrgente && <span className="tag urgent-badge"><AlertTriangle size={12} /> Limite Inscrição</span>}
+        {event.isArchived && <span className="tag archived-badge"><Archive size={14} /> Arquivo</span>}
+        <ExternalLink size={17} />
+      </div>
+      <h3>{event.title}</h3>
+      <p className="muted">{event.organizer}</p>
+      <p className="description">{event.description}</p>
+      <div className="details">
+        <p><strong>Data:</strong> {event.date}</p>
+        <p><strong>Formato:</strong> {event.type}</p>
+        <p><strong>Custo:</strong> {event.price}</p>
+        <p><strong>Certificado:</strong> {event.certificate}</p>
+      </div>
+      <div className="card-actions">
+        <a href={event.link} target="_blank" rel="noreferrer"><Button variant="outline" className="full">Ver página oficial</Button></a>
+        <a href={getGoogleCalendarUrl(event)} target="_blank" rel="noreferrer"><Button variant="outline" className="full"><Download size={15} /> Adicionar ao Google Calendar</Button></a>
+      </div>
+    </div>
+  )
+}
+
+function MonthlyCalendar({ events, onMonthChange }) {
+  const today = new Date()
+  const [visibleMonth, setVisibleMonth] = useState(new Date(today.getFullYear(),
