@@ -132,7 +132,7 @@ function parseCSV(text) {
 
   if (rows.length < 2) return []
 
-  const headers = rows[0].map((header) => normalizeText(header).replace(/[^a-z0-9]+/g, ''))
+  const headers = rows[0].map((header) => normalizeText(header))
 
   return rows.slice(1).map((cells) => {
     const raw = {}
@@ -140,32 +140,29 @@ function parseCSV(text) {
       raw[header] = cells[index] || ''
     })
 
-    const activeValue = normalizeText(raw.ativo || raw.ativo_ || raw.status || '')
+    const activeValue = normalizeText(raw['ativo?'] || raw['status'] || '')
     const isActive = !activeValue || ['sim', 'yes', 'published', 'publicado', 'ativo'].some((word) => activeValue.includes(word))
 
-    // Capturar a nova coluna de data limite de inscrição
-    const deadlineText = raw.datalimite || raw.datalimiteinscricao || raw.deadline || raw.inscricoesate || raw.limite || ''
-    
-    // O evento passa a ser considerado urgente/destacado se tiver qualquer texto preenchido na coluna de data limite
-    const isUrgenteManual = normalizeText(raw.urgente || raw.destaqueurgente || '').includes('sim')
+    // Alinhado exatamente com o nome na imagem: "data limite de inscricao"
+    const deadlineText = raw['data limite de inscricao'] || raw['datalimite'] || raw['deadline'] || ''
     const hasDeadline = deadlineText.trim().length > 0
 
     return {
-      title: raw.titulo || raw.title || '',
-      date: raw.data || raw.date || raw.startdate || raw.datainicio || '',
-      startDateRaw: raw.startdate || raw.datainicio || '',
-      endDateRaw: raw.enddate || raw.datafim || '',
-      category: normalizeCategory(raw.areacategoria || raw.categoria || raw.category || raw.area || raw.areas || ''),
-      type: raw.tipoformato || raw.formato || raw.type || raw.tipo || '',
-      organizer: raw.organizador || raw.organizer || '',
-      link: raw.linkoficial || raw.link || raw.url || '',
-      price: raw.custo || raw.price || raw.preco || '',
-      certificate: raw.certificado || raw.certificate || '',
-      region: raw.regiao || raw.region || raw.local || '',
-      description: raw.descricao || raw.description || '',
+      title: raw['titulo'] || raw['title'] || '',
+      date: raw['data'] || raw['date'] || raw['datainicio'] || '',
+      startDateRaw: raw['datainicio'] || '',
+      endDateRaw: raw['datafim'] || '',
+      category: normalizeCategory(raw['areacategoria'] || raw['categoria'] || raw['area'] || ''),
+      type: raw['tipoformato'] || raw['formato'] || raw['tipo'] || '',
+      organizer: raw['organizador'] || raw['organizer'] || '',
+      link: raw['link oficial'] || raw['linkoficial'] || raw['link'] || '',
+      price: raw['custo'] || raw['preco'] || '',
+      certificate: raw['certificado'] || '',
+      region: raw['regiao'] || raw['local'] || '',
+      description: raw['descricao'] || raw['description'] || '',
       status: isActive ? 'published' : 'draft',
-      deadline: deadlineText, // guardamos o texto original para exibir no card
-      isUrgente: isUrgenteManual || hasDeadline,
+      deadline: deadlineText, 
+      isUrgente: hasDeadline,
     }
   }).filter((event) => event.title && event.status === 'published')
 }
@@ -461,10 +458,11 @@ function FeatureStyles() {
       .calendar-pills-container { display: flex; flex-direction: column; gap: 0.25rem; flex-grow: 1; overflow: hidden; }
       .calendar-event-pill { display: block; padding: 0.25rem 0.4rem; border-radius: 999px; background: #e0f2fe; color: #075985; font-size: 0.72rem; line-height: 1.2; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       
-      .free-calendar-event, .free-badge, .mini-tag.free { background: #dcfce7 !important; color: #166534 !important; border-color: #86efac !important; }
+      /* Restauro do Verde e Definição do Amarelo */
+      .free-calendar-event, .free-badge, .mini-tag.free { background: #e6f4ea !important; color: #137333 !important; border-color: #ceead6 !important; }
       .urgent-calendar-event, .urgent-badge, .mini-tag.urgent { background: #fef9c3 !important; color: #713f12 !important; border-color: #fde047 !important; }
       
-      .free-event { border: 2px solid #86efac !important; background: #f0fdf4 !important; box-shadow: 0 12px 30px rgba(22, 101, 52, 0.08) !important; }
+      .free-event { border: 1px solid #dadce0 !important; background: #f8f9fa !important; border-left: 4px solid #137333 !important; }
       .urgent-event { border: 2px solid #fde047 !important; background: #fefce8 !important; box-shadow: 0 12px 30px rgba(113, 63, 18, 0.08) !important; }
       
       .archived-event { opacity: 0.7; }
@@ -477,7 +475,7 @@ function FeatureStyles() {
       .close-drawer { background: none; border: 0; font-size: 1.1rem; cursor: pointer; color: #64748b; }
       .drawer-content { display: flex; flex-direction: column; gap: 0.75rem; max-height: 450px; overflow-y: auto; }
       .drawer-item { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.75rem; border-left: 4px solid #cbd5e1; }
-      .drawer-item.free { border-left-color: #22c55e; }
+      .drawer-item.free { border-left-color: #137333; }
       .drawer-item.urgent { border-left-color: #eab308; }
       .drawer-item h4 { font-size: 0.88rem; margin: 0.25rem 0; color: #0f172a; line-clamp: 2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
       .mini-organizer { font-size: 0.75rem; color: #64748b; margin: 0; }
@@ -570,14 +568,10 @@ function App() {
   const [showArchive, setShowArchive] = useState(false)
   const [categorySearch, setCategorySearch] = useState('')
 
-  // Destaques ordenam os que têm data limite (isUrgente) primeiro
+  // Destaques: Ordenados puramente por ordem cronológica (Eventos mais recentes/próximos)
   const featuredEvents = useMemo(() => {
     return [...activeEvents]
-      .sort((a, b) => {
-        if (a.isUrgente && !b.isUrgente) return -1
-        if (!a.isUrgente && b.isUrgente) return 1
-        return a.startDate - b.startDate
-      })
+      .sort((a, b) => a.startDate - b.startDate)
       .slice(0, 4)
   }, [activeEvents])
 
