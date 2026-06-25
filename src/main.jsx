@@ -198,7 +198,7 @@ function parseEventDate(dateText = '') {
   if (clean.includes('ultima segunda-feira') || clean.includes('cada mes')) {
     return {
       start: new Date(startYear, 0, 1, 9, 0, 0),
-      end: new Date(Math.max(endYear, startYear + 1), 11, 31, 18, 0, 0),
+      end: new Date(startYear + 1, 11, 31, 18, 0, 0),
       isApproximate: true,
     }
   }
@@ -457,11 +457,9 @@ function FeatureStyles() {
       .calendar-pills-container { display: flex; flex-direction: column; gap: 0.25rem; flex-grow: 1; overflow: hidden; }
       .calendar-event-pill { display: block; padding: 0.25rem 0.4rem; border-radius: 999px; background: #e0f2fe; color: #075985; font-size: 0.72rem; line-height: 1.2; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       
-      /* Badges e Pílulas do Calendário */
       .free-calendar-event, .free-badge, .mini-tag.free { background: #e6f4ea !important; color: #137333 !important; border-color: #ceead6 !important; }
       .urgent-calendar-event, .urgent-badge, .mini-tag.urgent { background: #fef9c3 !important; color: #713f12 !important; border-color: #fde047 !important; }
       
-      /* Design Cirúrgico de Bordas Originais Restaurado (Sem fundos espalhafatosos) */
       .free-event { border: 1px solid #e2e8f0 !important; background: #ffffff !important; border-left: 5px solid #137333 !important; }
       .urgent-event { border: 1px solid #e2e8f0 !important; background: #ffffff !important; border-left: 5px solid #eab308 !important; }
       
@@ -568,12 +566,26 @@ function App() {
   const [showArchive, setShowArchive] = useState(false)
   const [categorySearch, setCategorySearch] = useState('')
 
-  // Destaques: Ordenados estritamente por ordem cronológica (Eventos mais próximos a acontecer)
+  // DESTAQUES 100% CORRIGIDOS: Apenas eventos cuja data inicial ou final seja igual/superior a hoje.
+  // Ordena de forma estrita pelos eventos que vão acontecer mais proximamente a partir de hoje.
   const featuredEvents = useMemo(() => {
-    return [...activeEvents]
-      .sort((a, b) => a.startDate - b.startDate)
+    const hoje = new Date()
+    hoje.setHours(0, 0, 0, 0)
+
+    return [...preparedEvents]
+      .filter((event) => !event.isArchived && event.endDate >= hoje)
+      .sort((a, b) => {
+        // Se ambos começam no futuro, ordena pelo início mais próximo
+        if (a.startDate >= hoje && b.startDate >= hoje) {
+          return a.startDate - b.startDate
+        }
+        // Se um já está a decorrer (ex: período letivo) e o outro é estritamente futuro, o futuro passa à frente
+        if (a.startDate < hoje && b.startDate >= hoje) return 1
+        if (b.startDate < hoje && a.startDate >= hoje) return -1
+        return a.startDate - b.startDate
+      })
       .slice(0, 4)
-  }, [activeEvents])
+  }, [preparedEvents])
 
   const sourceEvents = showArchive ? archivedEvents : activeEvents
   const filteredEvents = sourceEvents.filter((event) => {
@@ -628,7 +640,7 @@ function App() {
         <div className="container"><p className="small" style={{ marginTop: '1rem' }}>{sheetStatus}</p></div>
         <section className="container hero">
           <div>
-            <div className="pill"><CalendarDays size={16} /> Calendário de formação para profissionais de laboratório</div>
+            <div className="pill"><CalendarDays size={16} /> Calendário de formação para professionals de laboratório</div>
             <h1>Cursos, webinars e eventos laboratoriais num só lugar.</h1>
             <p className="lead">O MedLab Calendar reúne cursos, webinars, congressos e reuniões científicas num único local, com pesquisa, calendário mensal e arquivo automático de eventos passados.</p>
             <div className="hero-actions">
@@ -647,7 +659,7 @@ function App() {
 
           <div className="card feature-card">
             <div className="card-header">
-              <div><p className="eyebrow">Próximos eventos</p><h2>Eventos em destaque</h2></div>
+              <div><p className="eyebrow">Próximos eventos</p><h2>Eventos mais próximos</h2></div>
               <div className="soft-icon"><Filter size={20} /></div>
             </div>
             <div className="event-list">
@@ -656,7 +668,7 @@ function App() {
                   <div className="event-top">
                     <div>
                       <p className="event-title">
-                        {event.deadline && <span style={{ color: '#b45309', fontWeight: 'bold', fontSize: '0.75rem', marginRight: '0.4rem' }}>⚠️ ATÉ {event.deadline.toUpperCase()}:</span>}
+                        {event.deadline && <span style={{ color: '#b45309', fontWeight: 'bold', fontSize: '0.75rem', marginRight: '0.4rem' }}>⚠️ LIMITE INSCRIÇÃO: {event.deadline.toUpperCase()} | </span>}
                         {event.title}
                       </p>
                       <p className="muted">{event.organizer}</p>
@@ -679,8 +691,7 @@ function App() {
             <div className="soft-icon"><HeartHandshake size={22} /></div>
             <p className="eyebrow">Sobre</p>
             <h2>Uma ferramenta criada para ajudar colegas e fortalecer a comunidade laboratorial.</h2>
-            <p>A formação em medicina laboratorial encontra-se frequentemente dispersa entre sociedades científicas, universidades, hospitais, empresas e redes profissionais. O MedLab Calendar reúne cursos, webinars, congressos e reuniões científicas num único local, facilitando o acesso a oportunidades de aprendizagem contínua.</p>
-            <p>O projeto tem uma abordagem de curadoria independente: cada evento é resumido de forma simples e encaminha para a página oficial da entidade organizadora.</p>
+            <p>A formação em medicina laboratorial encontra-se frequentemente dispersa entre sociedades científicas, universidades, hospitais, empresas e reuniões científicas. O MedLab Calendar reúne cursos, webinars, congressos e reuniões científicas num único local, facilitando o acesso a oportunidades de aprendizagem contínua.</p>
           </div>
         </section>
 
@@ -697,7 +708,7 @@ function App() {
             </div>
 
             <div className="filters-panel">
-              <label className="search-input"><Search size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Pesquisar por tema, área, organizador ou palavra-chave" /></label>
+              <label className="search-input"><Search size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Pesquisar por tema, área, organizador..." /></label>
               <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)}>
                 <option>Todas</option>
                 {categories.map((category) => <option key={category}>{category}</option>)}
@@ -726,7 +737,6 @@ function App() {
           <div className="section-intro">
             <p className="eyebrow">Categorias</p>
             <h2>Eventos organizados por área.</h2>
-            <p>Pesquisa uma área ou clica num ícone para veres todos os cursos dessa categoria.</p>
           </div>
 
           <label className="category-search-box">
@@ -734,7 +744,7 @@ function App() {
             <input
               value={categorySearch}
               onChange={(event) => setCategorySearch(event.target.value)}
-              placeholder="Pesquisar área, por exemplo: Hematologia, Qualidade, Anatomia Patológica..."
+              placeholder="Pesquisar área..."
             />
           </label>
 
@@ -761,12 +771,9 @@ function App() {
               <div className="soft-icon"><ClipboardList size={22} /></div>
               <p className="eyebrow">Para Organizadores</p>
               <h2>Divulgue cursos, webinars e reuniões científicas relevante.</h2>
-              <p>O MedLab Calendar aceita sugestões de eventos de sociedades científicas, universidades, hospitais, laboratórios, empresas e outras entidades com formação relevante para a medicina laboratorial.</p>
             </div>
             <div className="organizers-copy">
-              <p><strong>Informação recomendada:</strong> título, data, organizador, área, formato, local, custo, certificado e link oficial.</p>
               <p><strong>Email:</strong> <a className="inline-link" href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
-              <p><strong>Importante:</strong> a plataforma atua apenas como serviço de curadoria e divulgação. Os eventos pertencem às respetivas entidades organizadoras.</p>
               <SuggestEventLink><Button>Submeter evento</Button></SuggestEventLink>
             </div>
           </div>
@@ -775,11 +782,7 @@ function App() {
 
       <footer className="footer">
         <div className="container footer-content">
-          <div>
-            <p>© 2026 MedLab Calendar. Curadoria independente de formação laboratorial.</p>
-            <p>Os eventos apresentados são da responsabilidade das entidades organizadoras. O MedLab Calendar atua apenas como plataforma de divulgação.</p>
-          </div>
-          <p>Contacto: <a className="inline-link" href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
+          <div><p>© 2026 MedLab Calendar. Curadoria independente de formação laboratorial.</p></div>
         </div>
       </footer>
     </div>
