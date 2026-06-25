@@ -143,7 +143,6 @@ function parseCSV(text) {
     const activeValue = normalizeText(raw['ativo?'] || raw['status'] || '')
     const isActive = !activeValue || ['sim', 'yes', 'published', 'publicado', 'ativo'].some((word) => activeValue.includes(word))
 
-    // Alinhado exatamente com o nome na imagem: "data limite de inscricao"
     const deadlineText = raw['data limite de inscricao'] || raw['datalimite'] || raw['deadline'] || ''
     const hasDeadline = deadlineText.trim().length > 0
 
@@ -458,12 +457,13 @@ function FeatureStyles() {
       .calendar-pills-container { display: flex; flex-direction: column; gap: 0.25rem; flex-grow: 1; overflow: hidden; }
       .calendar-event-pill { display: block; padding: 0.25rem 0.4rem; border-radius: 999px; background: #e0f2fe; color: #075985; font-size: 0.72rem; line-height: 1.2; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       
-      /* Restauro do Verde e Definição do Amarelo */
+      /* Badges e Pílulas do Calendário */
       .free-calendar-event, .free-badge, .mini-tag.free { background: #e6f4ea !important; color: #137333 !important; border-color: #ceead6 !important; }
       .urgent-calendar-event, .urgent-badge, .mini-tag.urgent { background: #fef9c3 !important; color: #713f12 !important; border-color: #fde047 !important; }
       
-      .free-event { border: 1px solid #dadce0 !important; background: #f8f9fa !important; border-left: 4px solid #137333 !important; }
-      .urgent-event { border: 2px solid #fde047 !important; background: #fefce8 !important; box-shadow: 0 12px 30px rgba(113, 63, 18, 0.08) !important; }
+      /* Design Cirúrgico de Bordas Originais Restaurado (Sem fundos espalhafatosos) */
+      .free-event { border: 1px solid #e2e8f0 !important; background: #ffffff !important; border-left: 5px solid #137333 !important; }
+      .urgent-event { border: 1px solid #e2e8f0 !important; background: #ffffff !important; border-left: 5px solid #eab308 !important; }
       
       .archived-event { opacity: 0.7; }
       .archived-badge { background: #f1f5f9; color: #475569; display: inline-flex; align-items: center; gap: 0.25rem; }
@@ -568,7 +568,7 @@ function App() {
   const [showArchive, setShowArchive] = useState(false)
   const [categorySearch, setCategorySearch] = useState('')
 
-  // Destaques: Ordenados puramente por ordem cronológica (Eventos mais recentes/próximos)
+  // Destaques: Ordenados estritamente por ordem cronológica (Eventos mais próximos a acontecer)
   const featuredEvents = useMemo(() => {
     return [...activeEvents]
       .sort((a, b) => a.startDate - b.startDate)
@@ -652,11 +652,11 @@ function App() {
             </div>
             <div className="event-list">
               {featuredEvents.map((event) => (
-                <div className={`event-row ${event.isUrgente ? 'urgent-row' : ''}`} style={event.isUrgente ? { borderLeft: '4px solid #eab308', paddingLeft: '0.5rem' } : {}} key={event.title}>
+                <div className="event-row" style={event.isUrgente ? { borderLeft: '4px solid #eab308', paddingLeft: '0.6rem' } : {}} key={event.title}>
                   <div className="event-top">
                     <div>
                       <p className="event-title">
-                        {event.deadline && <span style={{ color: '#a16207', fontWeight: 'bold', fontSize: '0.75rem', marginRight: '0.4rem' }}>⚠️ ATÉ {event.deadline.toUpperCase()}:</span>}
+                        {event.deadline && <span style={{ color: '#b45309', fontWeight: 'bold', fontSize: '0.75rem', marginRight: '0.4rem' }}>⚠️ ATÉ {event.deadline.toUpperCase()}:</span>}
                         {event.title}
                       </p>
                       <p className="muted">{event.organizer}</p>
