@@ -781,15 +781,26 @@ function App() {
       </main>
 
       <footer className="footer">
-  <div className="container footer-content">
-    <div>
-      <p><strong>© 2026 MedLab Calendar</strong></p>
-      <p>
-        A MedLab Calendar funciona como curadoria independente de eventos de formação laboratorial, limitando-se à sua divulgação.
-      </p>
-      <p>
-        A plataforma não participa em processos de inscrição, pagamento ou validação de conteúdos, sendo estes integralmente assegurados pelos organizadores.
-      </p>
+        <div className="container footer-content">
+          <div>
+            <p><strong>© 2026 MedLab Calendar</strong></p>
+            <p className="small" style={{ marginTop: '0.5rem', lineHeight: '1.7' }}>
+              A MedLab Calendar é uma plataforma independente de divulgação de eventos de formação na área da Medicina Laboratorial, reunindo informação disponibilizada por sociedades científicas, instituições de ensino, entidades públicas, empresas e demais organizadores.
+            </p>
+            <p className="small" style={{ lineHeight: '1.7' }}>
+              A plataforma limita-se à divulgação das iniciativas e não organiza, promove, patrocina ou representa os eventos publicados, salvo indicação expressa em contrário.
+            </p>
+            <p className="small" style={{ lineHeight: '1.7' }}>
+              Toda a informação relativa a programas, datas, horários, inscrições, custos, certificação, acreditação, cancelamentos ou alterações é da exclusiva responsabilidade das respetivas entidades organizadoras.
+            </p>
+            <p className="small" style={{ lineHeight: '1.7' }}>
+              A MedLab Calendar não participa em processos de inscrição, pagamento, emissão de certificados ou validação científica dos conteúdos, nem garante a exatidão, atualização ou disponibilidade permanente das informações publicadas. Recomenda-se sempre a consulta da página oficial de cada evento antes de efetuar qualquer inscrição.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
-  </div>
-</footer>
+  )
+}
+
+createRoot(document.getElementById('root')).render(<App />)
