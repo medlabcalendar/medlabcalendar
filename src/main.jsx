@@ -1,4 +1,4 @@
-O erro que ocorreu deveu-se à falta de uma chaveta de fecho } logo no final do componente App, o que quebrou a estrutura do código JavaScript/React.Aqui tem o código totalmente corrigido, já com a frase integrada no rodapé (footer) e com o erro de sintaxe solucionado.  Aproveitei também para adicionar um pequeno espaçamento vertical e flexibilidade ao rodapé para que o novo parágrafo fique visualmente bem enquadrado no design da página.  JavaScriptimport React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
   CalendarDays,
@@ -566,6 +566,8 @@ function App() {
   const [showArchive, setShowArchive] = useState(false)
   const [categorySearch, setCategorySearch] = useState('')
 
+  // DESTAQUES 100% CORRIGIDOS: Apenas eventos cuja data inicial ou final seja igual/superior a hoje.
+  // Ordena de forma estrita pelos eventos que vão acontecer mais proximamente a partir de hoje.
   const featuredEvents = useMemo(() => {
     const hoje = new Date()
     hoje.setHours(0, 0, 0, 0)
@@ -573,9 +575,11 @@ function App() {
     return [...preparedEvents]
       .filter((event) => !event.isArchived && event.endDate >= hoje)
       .sort((a, b) => {
+        // Se ambos começam no futuro, ordena pelo início mais próximo
         if (a.startDate >= hoje && b.startDate >= hoje) {
           return a.startDate - b.startDate
         }
+        // Se um já está a decorrer (ex: período letivo) e o outro é estritamente futuro, o futuro passa à frente
         if (a.startDate < hoje && b.startDate >= hoje) return 1
         if (b.startDate < hoje && a.startDate >= hoje) return -1
         return a.startDate - b.startDate
@@ -636,7 +640,7 @@ function App() {
         <div className="container"><p className="small" style={{ marginTop: '1rem' }}>{sheetStatus}</p></div>
         <section className="container hero">
           <div>
-            <div className="pill"><CalendarDays size={16} /> Calendário de formação para profissionais de laboratório</div>
+            <div className="pill"><CalendarDays size={16} /> Calendário de formação para professionals de laboratório</div>
             <h1>Cursos, webinars e eventos laboratoriais num só lugar.</h1>
             <p className="lead">O MedLab Calendar reúne cursos, webinars, congressos e reuniões científicas num único local, com pesquisa, calendário mensal e arquivo automático de eventos passados.</p>
             <div className="hero-actions">
@@ -664,7 +668,7 @@ function App() {
                   <div className="event-top">
                     <div>
                       <p className="event-title">
-                        {event.deadline && <span style={{ color: '#b45309', fontWeight: 'bold', fontSize: '0.75rem', marginRight: '0.4rem' }}>⚠️ LIMITE INSCRIÇÃO: {event.deadline.toUpperCase()} |</span>}
+                        {event.deadline && <span style={{ color: '#b45309', fontWeight: 'bold', fontSize: '0.75rem', marginRight: '0.4rem' }}>⚠️ LIMITE INSCRIÇÃO: {event.deadline.toUpperCase()} | </span>}
                         {event.title}
                       </p>
                       <p className="muted">{event.organizer}</p>
@@ -704,7 +708,7 @@ function App() {
             </div>
 
             <div className="filters-panel">
-              <label className="search-input"><Search size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Pesquisar por theme, área, organizador..." /></label>
+              <label className="search-input"><Search size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Pesquisar por tema, área, organizador..." /></label>
               <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)}>
                 <option>Todas</option>
                 {categories.map((category) => <option key={category}>{category}</option>)}
@@ -777,19 +781,15 @@ function App() {
       </main>
 
       <footer className="footer">
-        <div className="container footer-content" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          <div>
-            <p style={{ margin: 0 }}>© 2026 MedLab Calendar. Curadoria independente de formação laboratorial.</p>
-          </div>
-          <div style={{ fontSize: '0.82rem', color: '#64748b', borderTop: '1px solid #e2e8f0', paddingTop: '0.75rem', marginTop: '0.25rem' }}>
-            <p style={{ margin: 0, lineHeight: '1.4' }}>
-              A MedLab Calendar funciona como curadoria independente de eventos de formação laboratorial, limitando‑se à sua divulgação. A plataforma não participa em processos de inscrição, pagamento ou validação de conteúdos, sendo estes integralmente assegurados pelos organizadores.
-            </p>
-          </div>
-        </div>
-      </footer>
+  <div className="container footer-content">
+    <div>
+      <p><strong>© 2026 MedLab Calendar</strong></p>
+      <p>
+        A MedLab Calendar funciona como curadoria independente de eventos de formação laboratorial, limitando-se à sua divulgação.
+      </p>
+      <p>
+        A plataforma não participa em processos de inscrição, pagamento ou validação de conteúdos, sendo estes integralmente assegurados pelos organizadores.
+      </p>
     </div>
-  )
-}
-
-createRoot(document.getElementById('root')).render(<App />)
+  </div>
+</footer>
