@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+O erro que ocorreu deveu-se à falta de uma chaveta de fecho } logo no final do componente App, o que quebrou a estrutura do código JavaScript/React.Aqui tem o código totalmente corrigido, já com a frase integrada no rodapé (footer) e com o erro de sintaxe solucionado.  Aproveitei também para adicionar um pequeno espaçamento vertical e flexibilidade ao rodapé para que o novo parágrafo fique visualmente bem enquadrado no design da página.  JavaScriptimport React, { useEffect, useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
   CalendarDays,
@@ -618,4 +618,178 @@ function App() {
             <div className="brand-icon"><Microscope size={22} /></div>
             <div>
               <p className="brand-title">MedLab Calendar</p>
-              <p className="brand-subtitle">Laboratory Medicine Education Hub</p
+              <p className="brand-subtitle">Laboratory Medicine Education Hub</p>
+            </div>
+          </div>
+          <nav className="nav-links">
+            <a href="#about">Sobre</a>
+            <a href="#calendar">Calendário</a>
+            <a href="#events">Eventos</a>
+            <a href="#categories">Categorias</a>
+            <a href="#organizers">Para Organizadores</a>
+          </nav>
+          <a href="#events"><Button>Ver eventos</Button></a>
+        </div>
+      </header>
+
+      <main>
+        <div className="container"><p className="small" style={{ marginTop: '1rem' }}>{sheetStatus}</p></div>
+        <section className="container hero">
+          <div>
+            <div className="pill"><CalendarDays size={16} /> Calendário de formação para profissionais de laboratório</div>
+            <h1>Cursos, webinars e eventos laboratoriais num só lugar.</h1>
+            <p className="lead">O MedLab Calendar reúne cursos, webinars, congressos e reuniões científicas num único local, com pesquisa, calendário mensal e arquivo automático de eventos passados.</p>
+            <div className="hero-actions">
+              <a href="#events"><Button>Explorar próximos eventos</Button></a>
+              <SuggestEventLink><Button variant="outline">Submeter evento</Button></SuggestEventLink>
+              <a href="https://1534ef9d.sibforms.com/serve/MUIFAHFh5N7BeM-dVw2LycaCbsspKR2qDeIx-bR6hWDL3C_3flMkcOYIvSZhwbQFOZkkX6WIeH4AUHaz8iRgywSR6IXV0cCHoHHbe2f0toIHQKYqkVCRKJpywPb2QCAA3D_x5pV1Pl4oJ8qdLPwya_iaMkJU5RHsgFo-D4Iizfs61iTuEvA-NhRSvcmw3BalvcZxEFA1z1AqQ4949w==" target="_blank" rel="noreferrer"><Button variant="outline">Subscrever Newsletter</Button></a>
+            </div>
+            <div className="stats-row">
+              <span>{activeEvents.length} próximos eventos</span>
+              <span>{freeCount} gratuitos</span>
+              <span>{thisMonthCount} este mês</span>
+              <span>{archivedEvents.length} arquivados</span>
+            </div>
+            <p className="small">Contacto: <a className="inline-link" href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
+          </div>
+
+          <div className="card feature-card">
+            <div className="card-header">
+              <div><p className="eyebrow">Próximos eventos</p><h2>Eventos mais próximos</h2></div>
+              <div className="soft-icon"><Filter size={20} /></div>
+            </div>
+            <div className="event-list">
+              {featuredEvents.map((event) => (
+                <div className="event-row" style={event.isUrgente ? { borderLeft: '4px solid #eab308', paddingLeft: '0.6rem' } : {}} key={event.title}>
+                  <div className="event-top">
+                    <div>
+                      <p className="event-title">
+                        {event.deadline && <span style={{ color: '#b45309', fontWeight: 'bold', fontSize: '0.75rem', marginRight: '0.4rem' }}>⚠️ LIMITE INSCRIÇÃO: {event.deadline.toUpperCase()} |</span>}
+                        {event.title}
+                      </p>
+                      <p className="muted">{event.organizer}</p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.25rem' }}>
+                      <span className="tag">{event.category}</span>
+                      {event.isFree && <span className="tag free-badge">Gratuito</span>}
+                    </div>
+                  </div>
+                  <div className="event-meta"><span>{event.date}</span><span>{event.type}</span><span>{event.region}</span><span>{event.price}</span></div>
+                </div>
+              ))}
+              {featuredEvents.length === 0 && <p className="muted" style={{ padding: '1rem' }}>Nenhum evento em destaque disponível.</p>}
+            </div>
+          </div>
+        </section>
+
+        <section id="about" className="intro-section">
+          <div className="container intro-card">
+            <div className="soft-icon"><HeartHandshake size={22} /></div>
+            <p className="eyebrow">Sobre</p>
+            <h2>Uma ferramenta criada para ajudar colegas e fortalecer a comunidade laboratorial.</h2>
+            <p>A formação em medicina laboratorial encontra-se frequentemente dispersa entre sociedades científicas, universidades, hospitais, empresas e reuniões científicas. O MedLab Calendar reúne cursos, webinars, congressos e reuniões científicas num único local, facilitando o acesso a oportunidades de aprendizagem contínua.</p>
+          </div>
+        </section>
+
+        <MonthlyCalendar events={activeEvents} />
+
+        <section id="events" className="white-section">
+          <div className="container">
+            <div className="section-head">
+              <div>
+                <p className="eyebrow">Eventos e formações</p>
+                <h2>{showArchive ? 'Arquivo Histórico de Formações' : 'Todas as Formações Disponíveis'}</h2>
+              </div>
+              <Button variant="outline" onClick={() => setShowArchive(!showArchive)}>{showArchive ? 'Ver eventos ativos' : 'Ver arquivo'}</Button>
+            </div>
+
+            <div className="filters-panel">
+              <label className="search-input"><Search size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Pesquisar por theme, área, organizador..." /></label>
+              <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)}>
+                <option>Todas</option>
+                {categories.map((category) => <option key={category}>{category}</option>)}
+              </select>
+              <select value={formatFilter} onChange={(event) => setFormatFilter(event.target.value)}>
+                <option>Todos</option>
+                <option>Online</option>
+                <option>Presencial</option>
+                <option>Webinar</option>
+                <option>Curso</option>
+                <option>Congresso</option>
+              </select>
+              <label className="checkbox-filter"><input type="checkbox" checked={onlyFree} onChange={(event) => setOnlyFree(event.target.checked)} /> Mostrar apenas gratuitos</label>
+            </div>
+
+            <div className="notice">
+              {showArchive ? 'Arquivo de eventos passados.' : 'A apresentar o catálogo global de eventos ativos.'} 
+              <strong> Resultado: {filteredEvents.length} evento(s).</strong>
+            </div>
+            
+            <div className="grid-3">{filteredEvents.map((event) => <EventCard event={event} key={event.title} />)}</div>
+          </div>
+        </section>
+
+        <section id="categories" className="container categories-section">
+          <div className="section-intro">
+            <p className="eyebrow">Categorias</p>
+            <h2>Eventos organizados por área.</h2>
+          </div>
+
+          <label className="category-search-box">
+            <Search size={18} />
+            <input
+              value={categorySearch}
+              onChange={(event) => setCategorySearch(event.target.value)}
+              placeholder="Pesquisar área..."
+            />
+          </label>
+
+          <div className="category-icon-grid">
+            {visibleCategories.map((category) => {
+              const matchingEvents = preparedEvents.filter((event) => normalizeText(event.category) === normalizeText(category))
+              const Icon = getCategoryIcon(category)
+              return (
+                <button type="button" className="category-icon-card" key={category} onClick={() => openCategory(category)}>
+                  <span className="category-icon" aria-hidden="true">
+                    <Icon size={30} />
+                  </span>
+                  <strong>{category}</strong>
+                  <span>{matchingEvents.length} evento(s)</span>
+                </button>
+              )
+            })}
+          </div>
+        </section>
+
+        <section id="organizers" className="container organizers-section">
+          <div className="organizers-card">
+            <div>
+              <div className="soft-icon"><ClipboardList size={22} /></div>
+              <p className="eyebrow">Para Organizadores</p>
+              <h2>Divulgue cursos, webinars e reuniões científicas relevante.</h2>
+            </div>
+            <div className="organizers-copy">
+              <p><strong>Email:</strong> <a className="inline-link" href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
+              <SuggestEventLink><Button>Submeter evento</Button></SuggestEventLink>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="footer">
+        <div className="container footer-content" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <div>
+            <p style={{ margin: 0 }}>© 2026 MedLab Calendar. Curadoria independente de formação laboratorial.</p>
+          </div>
+          <div style={{ fontSize: '0.82rem', color: '#64748b', borderTop: '1px solid #e2e8f0', paddingTop: '0.75rem', marginTop: '0.25rem' }}>
+            <p style={{ margin: 0, lineHeight: '1.4' }}>
+              A MedLab Calendar funciona como curadoria independente de eventos de formação laboratorial, limitando‑se à sua divulgação. A plataforma não participa em processos de inscrição, pagamento ou validação de conteúdos, sendo estes integralmente assegurados pelos organizadores.
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  )
+}
+
+createRoot(document.getElementById('root')).render(<App />)
