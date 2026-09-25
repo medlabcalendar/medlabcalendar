@@ -20,12 +20,17 @@ import {
   BarChart3,
   Lightbulb,
   TestTube2,
-  AlertTriangle
+  AlertTriangle,
+  Star,
+  Share2,
+  Bell,
+  Send
 } from 'lucide-react'
 import './styles.css'
 
 const contactEmail = 'medlabcalendar@gmail.com'
 const googleFormUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSc22SEwuG9LJnLsQ0tgRrJA9zx2Fsr7cZ6iA9g06qRnemOxVw/viewform'
+const newsletterUrl = 'https://1534ef9d.sibforms.com/serve/MUIFAHFh5N7BeM-dVw2LycaCbsspKR2qDeIx-bR6hWDL3C_3flMkcOYIvSZhwbQFOZkkX6WIeH4AUHaz8iRgywSR6IXV0cCHoHHbe2f0toIHQKYqkVCRKJpywPb2QCAA3D_x5pV1Pl4oJ8qdLPwya_iaMkJU5RHsgFo-D4Iizfs61iTuEvA-NhRSvcmw3BalvcZxEFA1z1AqQ4949w=='
 
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRNMDWDdFpEBXYUUKpw87IYCdmy_Y6bTGKzpKpDuundPcyfxvEZZ9SvSzQ_rTb2TZMk0z-T6b5Yzs4f/pub?output=csv'
 
@@ -47,53 +52,9 @@ function normalizeText(value = '') {
     .toLowerCase()
 }
 
-const areaCategories = [
-  'Genética',
-  'Inovação',
-  'Hematologia',
-  'Coagulação e Hemostase',
-  'Medicina Laboratorial',
-  'Bioquímica Clínica',
-  'Microbiologia',
-  'Qualidade',
-  'Anatomia Patológica',
-  'Biologia Molecular',
-  'Toxicologia',
-  'Bioestatística',
-  'Imunologia',
-  'Urgência',
-]
-
 function normalizeCategory(category) {
-  if (!category) return 'Medicina Laboratorial'
-  const normalized = normalizeText(category)
-
-  if (normalized.includes('anatomia')) return 'Anatomia Patológica'
-  if (normalized.includes('biologia molecular')) return 'Biologia Molecular'
-  if (normalized.includes('bioestatistica') || normalized.includes('investigacao')) return 'Bioestatística'
-  if (normalized.includes('toxicologia') || normalized.includes('toxicolog')) return 'Toxicologia'
-  if (normalized.includes('bioquimica') && normalized.includes('urgencia')) return 'Urgência'
-  if (normalized.includes('urgencia')) return 'Urgência'
-  if (normalized.includes('bioquim')) return 'Bioquímica Clínica'
-  if (normalized.includes('nefrologia')) return 'Bioquímica Clínica'
-  if (normalized.includes('neurologia')) return 'Bioquímica Clínica'
-  if (normalized.includes('genetica') && normalized.includes('inovacao')) return 'Inovação'
-  if (normalized.includes('genet')) return 'Genética'
-  if (normalized.includes('hemostase') || normalized.includes('coagul')) return 'Coagulação e Hemostase'
-  if (normalized.includes('hematolog') || normalized.includes('mieloma') || normalized.includes('oncologia')) return 'Hematologia'
-  if (normalized.includes('microbiolog') || normalized.includes('infec') || normalized.includes('fungal') || normalized.includes('rubeola')) return 'Microbiologia'
-  if (normalized.includes('qualidade') || normalized.includes('pre-analitica') || normalized.includes('poct') || normalized.includes('urinalise')) return 'Qualidade'
-  if (normalized.includes('imunolog') || normalized.includes('imuno')) return 'Imunologia'
-  if (normalized.includes('medicina laboratorial')) return 'Medicina Laboratorial'
-  if (normalized.includes('inovacao') || normalized.includes('inteligencia artificial')) return 'Inovação'
-
-  for (const official of areaCategories) {
-    if (normalizeText(official) === normalized) {
-      return official
-    }
-  }
-
-  return 'Medicina Laboratorial'
+  const value = String(category || '').trim()
+  return value || 'Medicina Laboratorial'
 }
 
 function parseCSV(text) {
@@ -186,9 +147,25 @@ function parseEventDate(dateText = '') {
     return { start, end, isApproximate: false }
   }
 
-  const yearMatches = [...clean.matchAll(/20\d{2}/g)].map((match) => Number(match[0]))
-  const monthMatches = [...clean.matchAll(/janeiro|fevereiro|marco|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro/g)].map((match) => match[0])
-  const dayMatches = [...clean.matchAll(/\b(\d{1,2})\b/g)]
+  const dmyRange = clean.match(/\b(\d{1,2})-(\d{1,2})-(20\d{2})(?:\s*(?:a|-)\s*(\d{1,2})-(\d{1,2})-(20\d{2}))?\b/)
+  if (dmyRange) {
+    const startDay = Number(dmyRange[1])
+    const startMonth = Number(dmyRange[2]) - 1
+    const startYear = Number(dmyRange[3])
+    const start = new Date(startYear, startMonth, startDay, 9, 0, 0)
+    const end = dmyRange[4]
+      ? new Date(Number(dmyRange[6]), Number(dmyRange[5]) - 1, Number(dmyRange[4]), 18, 0, 0)
+      : new Date(startYear, startMonth, startDay, 23, 59, 59, 999)
+    return { start, end, isApproximate: false }
+  }
+
+  const cleanWithoutTimes = clean
+    .replace(/\b\d{1,2}\s*h\s*\d{0,2}\b/g, '')
+    .replace(/\b\d{1,2}:\d{2}\b/g, '')
+
+  const yearMatches = [...cleanWithoutTimes.matchAll(/20\d{2}/g)].map((match) => Number(match[0]))
+  const monthMatches = [...cleanWithoutTimes.matchAll(/janeiro|fevereiro|marco|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro/g)].map((match) => match[0])
+  const dayMatches = [...cleanWithoutTimes.matchAll(/\b(\d{1,2})\b/g)]
     .map((match) => Number(match[1]))
     .filter((day) => day >= 1 && day <= 31)
 
@@ -285,6 +262,48 @@ function SuggestEventLink({ children }) {
   return <a href={submissionHref()} target={googleFormUrl ? '_blank' : undefined} rel={googleFormUrl ? 'noreferrer' : undefined}>{children}</a>
 }
 
+function QuickSubmission() {
+  const [url, setUrl] = useState('')
+  const [details, setDetails] = useState('')
+
+  function handleSubmit(event) {
+    event.preventDefault()
+    const cleanUrl = url.trim()
+    if (!cleanUrl) return
+
+    const subject = encodeURIComponent('Sugestão rápida de formação — MedLab Calendar')
+    const body = encodeURIComponent(
+      `Olá,\n\nEncontrei esta formação:\n${cleanUrl}\n\n${details.trim() ? `Informação adicional:\n${details.trim()}\n\n` : ''}Obrigada.`
+    )
+    window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${body}`
+  }
+
+  return (
+    <form className="quick-submit-form" onSubmit={handleSubmit}>
+      <label>
+        <span>Link da formação</span>
+        <input
+          type="url"
+          value={url}
+          onChange={(event) => setUrl(event.target.value)}
+          placeholder="https://..."
+          required
+        />
+      </label>
+      <label>
+        <span>Informação adicional <small>(opcional)</small></span>
+        <textarea
+          value={details}
+          onChange={(event) => setDetails(event.target.value)}
+          placeholder="Ex.: prazo de inscrição, área, observação..."
+          rows="3"
+        />
+      </label>
+      <Button type="submit"><Send size={15} /> Enviar sugestão</Button>
+    </form>
+  )
+}
+
 function getPreparedEvents(eventsSource) {
   const now = new Date()
   return eventsSource
@@ -303,19 +322,71 @@ function getPreparedEvents(eventsSource) {
     .sort((a, b) => a.startDate - b.startDate)
 }
 
-function EventCard({ event }) {
+function getEventId(event) {
+  return `${event.title || ''}::${event.date || ''}::${event.organizer || ''}`
+}
+
+function getShareText(event) {
+  return `${event.title}
+
+📅 ${event.date || 'Data a confirmar'}
+🏢 ${event.organizer || 'Organizador não indicado'}
+
+Mais informações: ${event.link || window.location.href}
+
+Encontrado no MedLab Calendar`
+}
+
+async function shareEvent(event) {
+  const shareData = {
+    title: event.title,
+    text: getShareText(event),
+    url: event.link || window.location.href,
+  }
+
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData)
+      return
+    } catch (error) {
+      if (error?.name === 'AbortError') return
+    }
+  }
+
+  try {
+    await navigator.clipboard.writeText(`${getShareText(event)}\n${event.link || window.location.href}`)
+    window.alert('Informação da formação copiada.')
+  } catch {
+    window.prompt('Copia este link:', event.link || window.location.href)
+  }
+}
+
+function EventCard({ event, isSaved, onToggleSaved }) {
   return (
     <div className={`card event-card ${event.isArchived ? 'archived-event' : ''} ${event.isFree ? 'free-event' : ''} ${event.isUrgente ? 'urgent-event' : ''}`}>
       <div className="event-card-top">
-        <span className="tag">{event.category}</span>
-        {event.isFree && <span className="tag free-badge">Gratuito</span>}
-        {event.isUrgente && <span className="tag urgent-badge"><AlertTriangle size={12} /> Limite Inscrição</span>}
-        {event.isArchived && <span className="tag archived-badge"><Archive size={14} /> Arquivo</span>}
-        <ExternalLink size={17} />
+        <div className="event-tags">
+          <span className="tag">{event.category}</span>
+          {event.isFree && <span className="tag free-badge">Gratuito</span>}
+          {event.isUrgente && <span className="tag urgent-badge"><AlertTriangle size={12} /> Limite Inscrição</span>}
+          {event.isArchived && <span className="tag archived-badge"><Archive size={14} /> Arquivo</span>}
+        </div>
+        <button
+          type="button"
+          className={`icon-action ${isSaved ? 'saved' : ''}`}
+          onClick={() => onToggleSaved(event)}
+          aria-pressed={isSaved}
+          aria-label={isSaved ? 'Remover das guardadas' : 'Guardar formação'}
+          title={isSaved ? 'Remover das guardadas' : 'Guardar formação'}
+        >
+          <Star size={20} fill={isSaved ? 'currentColor' : 'none'} />
+        </button>
       </div>
+
       <h3>{event.title}</h3>
       <p className="muted">{event.organizer}</p>
       <p className="description">{event.description}</p>
+
       <div className="details">
         <p><strong>Data do Evento:</strong> {event.date}</p>
         {event.deadline && (
@@ -327,9 +398,19 @@ function EventCard({ event }) {
         <p><strong>Custo:</strong> {event.price}</p>
         <p><strong>Certificado:</strong> {event.certificate}</p>
       </div>
+
       <div className="card-actions">
-        <a href={event.link} target="_blank" rel="noreferrer"><Button variant="outline" className="full">Ver página oficial</Button></a>
-        <a href={getGoogleCalendarUrl(event)} target="_blank" rel="noreferrer"><Button variant="outline" className="full"><Download size={15} /> Adicionar ao Google Calendar</Button></a>
+        {event.link && (
+          <a href={event.link} target="_blank" rel="noreferrer">
+            <Button variant="outline" className="full"><ExternalLink size={15} /> Ver página oficial</Button>
+          </a>
+        )}
+        <a href={getGoogleCalendarUrl(event)} target="_blank" rel="noreferrer">
+          <Button variant="outline" className="full"><Download size={15} /> Adicionar ao Google Calendar</Button>
+        </a>
+        <Button variant="outline" className="full" onClick={() => shareEvent(event)}>
+          <Share2 size={15} /> Partilhar formação
+        </Button>
       </div>
     </div>
   )
@@ -481,7 +562,7 @@ function FeatureStyles() {
       .mini-tag { font-size: 0.65rem; padding: 0.1rem 0.35rem; border-radius: 4px; background: #f1f5f9; color: #475569; font-weight: 600; }
       .drawer-link { font-size: 0.75rem; color: #2563eb; text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; margin-top: 0.4rem; font-weight: 500; }
       
-      .filters-panel { display: grid; grid-template-columns: 2fr 1fr 1fr auto auto; gap: 0.75rem; align-items: center; margin: 1rem 0; }
+      .filters-panel { display: grid; grid-template-columns: 2fr 1fr 1fr auto auto auto; gap: 0.75rem; align-items: center; margin: 1rem 0; }
       .filters-panel input, .filters-panel select { width: 100%; border: 1px solid #cbd5e1; border-radius: 12px; padding: 0.75rem 0.9rem; font: inherit; background: #fff; }
       .checkbox-filter { display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
       .stats-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
@@ -499,12 +580,30 @@ function FeatureStyles() {
       .category-icon-card strong { color: #0f172a; line-height: 1.25; font-size: 1rem; }
       .category-icon-card span:last-child { color: #64748b; font-size: 0.9rem; }
       
+
+      .event-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
+      .icon-action { width: 40px; height: 40px; border-radius: 999px; border: 1px solid #e2e8f0; background: #fff; color: #64748b; display: grid; place-items: center; cursor: pointer; flex-shrink: 0; transition: all 0.2s ease; }
+      .icon-action:hover { background: #f8fafc; color: #0f172a; transform: translateY(-1px); }
+      .icon-action.saved { background: #fef9c3; border-color: #fde68a; color: #ca8a04; }
+      .card-actions .full { margin-top: 0; width: 100%; }
+      .card-actions a { display: block; }
+      .quick-submit-form { display: grid; gap: 1rem; }
+      .quick-submit-form label { display: grid; gap: 0.4rem; color: #334155; font-weight: 700; font-size: 0.9rem; }
+      .quick-submit-form input, .quick-submit-form textarea { width: 100%; border: 1px solid #cbd5e1; border-radius: 14px; padding: 0.85rem 1rem; font: inherit; background: #fff; color: #0f172a; }
+      .quick-submit-form textarea { resize: vertical; }
+      .quick-submit-form small { color: #64748b; font-weight: 500; }
+      .alert-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 28px; padding: 30px; box-shadow: 0 2px 8px rgba(15,23,42,.04); display: grid; grid-template-columns: auto 1fr auto; gap: 1.25rem; align-items: center; }
+      .alert-card h2 { font-size: 28px; }
+      .alert-card p:not(.eyebrow) { color: #475569; line-height: 1.6; }
+      .organizers-secondary { padding-top: 0; }
+
       @media (max-width: 900px) {
         .calendar-layout-container { flex-direction: column; }
         .calendar-drawer { max-width: 100%; width: 100%; position: static; }
         .monthly-calendar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .calendar-weekday { display: none; }
         .filters-panel { grid-template-columns: 1fr; }
+        .alert-card { grid-template-columns: 1fr; }
       }
     `}</style>
   )
@@ -558,13 +657,38 @@ function App() {
   const preparedEvents = useMemo(() => getPreparedEvents(rawEvents), [rawEvents])
   const activeEvents = preparedEvents.filter((event) => !event.isArchived)
   const archivedEvents = preparedEvents.filter((event) => event.isArchived)
-  const categories = useMemo(() => areaCategories, [])
+  const categories = useMemo(() => {
+    const unique = [...new Set(preparedEvents.map((event) => event.category).filter(Boolean))]
+    return unique.sort((a, b) => a.localeCompare(b, 'pt'))
+  }, [preparedEvents])
+
+  const [savedEvents, setSavedEvents] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('medlab-saved-events')) || []
+    } catch {
+      return []
+    }
+  })
+
   const [query, setQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('Todas')
   const [formatFilter, setFormatFilter] = useState('Todos')
   const [onlyFree, setOnlyFree] = useState(false)
+  const [onlySaved, setOnlySaved] = useState(false)
   const [showArchive, setShowArchive] = useState(false)
   const [categorySearch, setCategorySearch] = useState('')
+
+  function toggleSavedEvent(event) {
+    const id = getEventId(event)
+    setSavedEvents((current) => {
+      const updated = current.includes(id)
+        ? current.filter((savedId) => savedId !== id)
+        : [...current, id]
+
+      localStorage.setItem('medlab-saved-events', JSON.stringify(updated))
+      return updated
+    })
+  }
 
   // DESTAQUES 100% CORRIGIDOS: Apenas eventos cuja data inicial ou final seja igual/superior a hoje.
   // Ordena de forma estrita pelos eventos que vão acontecer mais proximamente a partir de hoje.
@@ -595,8 +719,9 @@ function App() {
     const normalizedType = normalizeText(`${event.type} ${event.region}`)
     const matchesFormat = formatFilter === 'Todos' || normalizedType.includes(normalizeText(formatFilter))
     const matchesFree = !onlyFree || event.isFree
+    const matchesSaved = !onlySaved || savedEvents.includes(getEventId(event))
 
-    return matchesSearch && matchesCategory && matchesFormat && matchesFree
+    return matchesSearch && matchesCategory && matchesFormat && matchesFree && matchesSaved
   })
 
   const freeCount = activeEvents.filter((event) => event.isFree).length
@@ -640,19 +765,20 @@ function App() {
         <div className="container"><p className="small" style={{ marginTop: '1rem' }}>{sheetStatus}</p></div>
         <section className="container hero">
           <div>
-            <div className="pill"><CalendarDays size={16} /> Calendário de formação para professionals de laboratório</div>
+            <div className="pill"><CalendarDays size={16} /> Calendário de formação para profissionais de laboratório</div>
             <h1>Cursos, webinars e eventos laboratoriais num só lugar.</h1>
             <p className="lead">O MedLab Calendar reúne cursos, webinars, congressos e reuniões científicas num único local, com pesquisa, calendário mensal e arquivo automático de eventos passados.</p>
             <div className="hero-actions">
               <a href="#events"><Button>Explorar próximos eventos</Button></a>
-              <SuggestEventLink><Button variant="outline">Submeter evento</Button></SuggestEventLink>
-              <a href="https://1534ef9d.sibforms.com/serve/MUIFAHFh5N7BeM-dVw2LycaCbsspKR2qDeIx-bR6hWDL3C_3flMkcOYIvSZhwbQFOZkkX6WIeH4AUHaz8iRgywSR6IXV0cCHoHHbe2f0toIHQKYqkVCRKJpywPb2QCAA3D_x5pV1Pl4oJ8qdLPwya_iaMkJU5RHsgFo-D4Iizfs61iTuEvA-NhRSvcmw3BalvcZxEFA1z1AqQ4949w==" target="_blank" rel="noreferrer"><Button variant="outline">Subscrever Newsletter</Button></a>
+              <a href="#submit"><Button variant="outline"><Send size={15} /> Sugerir formação</Button></a>
+              <a href={newsletterUrl} target="_blank" rel="noreferrer"><Button variant="outline"><Bell size={15} /> Avisa-me de novas formações</Button></a>
             </div>
             <div className="stats-row">
               <span>{activeEvents.length} próximos eventos</span>
               <span>{freeCount} gratuitos</span>
               <span>{thisMonthCount} este mês</span>
               <span>{archivedEvents.length} arquivados</span>
+              <span>{savedEvents.length} guardadas</span>
             </div>
             <p className="small">Contacto: <a className="inline-link" href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
           </div>
@@ -722,6 +848,7 @@ function App() {
                 <option>Congresso</option>
               </select>
               <label className="checkbox-filter"><input type="checkbox" checked={onlyFree} onChange={(event) => setOnlyFree(event.target.checked)} /> Mostrar apenas gratuitos</label>
+              <label className="checkbox-filter"><input type="checkbox" checked={onlySaved} onChange={(event) => setOnlySaved(event.target.checked)} /> <Star size={16} /> Guardadas ({savedEvents.length})</label>
             </div>
 
             <div className="notice">
@@ -729,7 +856,16 @@ function App() {
               <strong> Resultado: {filteredEvents.length} evento(s).</strong>
             </div>
             
-            <div className="grid-3">{filteredEvents.map((event) => <EventCard event={event} key={event.title} />)}</div>
+            <div className="grid-3">
+              {filteredEvents.map((event) => (
+                <EventCard
+                  event={event}
+                  key={getEventId(event)}
+                  isSaved={savedEvents.includes(getEventId(event))}
+                  onToggleSaved={toggleSavedEvent}
+                />
+              ))}
+            </div>
           </div>
         </section>
 
@@ -765,17 +901,36 @@ function App() {
           </div>
         </section>
 
-        <section id="organizers" className="container organizers-section">
+        <section id="submit" className="container organizers-section">
           <div className="organizers-card">
             <div>
-              <div className="soft-icon"><ClipboardList size={22} /></div>
-              <p className="eyebrow">Para Organizadores</p>
-              <h2>Divulgue cursos, webinars e reuniões científicas relevante.</h2>
+              <div className="soft-icon"><Send size={22} /></div>
+              <p className="eyebrow">Sugerir uma formação</p>
+              <h2>Encontraste uma formação que ainda não está aqui?</h2>
+              <p>Basta enviares o link. Nós tratamos de verificar e organizar a informação.</p>
             </div>
+
             <div className="organizers-copy">
-              <p><strong>Email:</strong> <a className="inline-link" href={`mailto:${contactEmail}`}>{contactEmail}</a></p>
-              <SuggestEventLink><Button>Submeter evento</Button></SuggestEventLink>
+              <QuickSubmission />
+              <p className="small">
+                És organizador ou queres enviar todos os detalhes?{' '}
+                <SuggestEventLink><span className="inline-link">Abrir formulário completo</span></SuggestEventLink>
+              </p>
             </div>
+          </div>
+        </section>
+
+        <section id="organizers" className="container organizers-section organizers-secondary">
+          <div className="alert-card">
+            <div className="soft-icon"><Bell size={22} /></div>
+            <div>
+              <p className="eyebrow">Alertas de formação</p>
+              <h2>Avisa-me de novas formações.</h2>
+              <p>Subscreve para receber novidades do MedLab Calendar e novas oportunidades de formação.</p>
+            </div>
+            <a href={newsletterUrl} target="_blank" rel="noreferrer">
+              <Button><Bell size={15} /> Quero receber alertas</Button>
+            </a>
           </div>
         </section>
       </main>
